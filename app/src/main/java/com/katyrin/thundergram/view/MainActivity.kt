@@ -1,7 +1,8 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.katyrin.thundergram.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

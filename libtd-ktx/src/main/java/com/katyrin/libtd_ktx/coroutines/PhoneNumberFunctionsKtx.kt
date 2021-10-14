@@ -115,7 +115,7 @@ suspend fun TelegramFlow.sendPhoneNumberVerificationCode(
  */
 suspend fun TelegramFlow.setAuthenticationPhoneNumber(
     phoneNumber: String?,
-    settings: PhoneNumberAuthenticationSettings?
+    settings: PhoneNumberAuthenticationSettings? = null
 ): Unit = sendFunctionLaunch(TdApi.SetAuthenticationPhoneNumber(phoneNumber, settings))
 
 /**

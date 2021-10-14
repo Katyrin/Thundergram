@@ -419,10 +419,10 @@ suspend fun TelegramFlow.getChatStatisticsUrl(
  * @return [Chats] Represents a list of chats.
  */
 suspend fun TelegramFlow.getChats(
-    chatList: ChatList?,
     offsetOrder: Long,
     offsetChatId: Long,
-    limit: Int
+    limit: Int,
+    chatList: ChatList? = TdApi.ChatListMain()
 ): Chats = sendFunctionAsync(TdApi.GetChats(chatList, offsetOrder, offsetChatId, limit))
 
 /**

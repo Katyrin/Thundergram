@@ -34,11 +34,7 @@ class TelegramFlow(
 
         client = existingClient
             ?.also { it.setUpdatesHandler { resultHandler } }
-            ?: Client.create(
-                resultHandler,
-                null,
-                null
-            )
+            ?: Client.create(resultHandler, null, null)
     }
 
     /**
@@ -57,7 +53,7 @@ class TelegramFlow(
      * @throws TelegramException.ClientNotAttached if TdApi client has not attached yet
      */
     suspend inline fun <reified ExpectedResult : TdApi.Object>
-        sendFunctionAsync(function: TdApi.Function): ExpectedResult =
+            sendFunctionAsync(function: TdApi.Function): ExpectedResult =
         suspendCoroutine { continuation ->
             val resultHandler: (TdApi.Object) -> Unit = { result ->
                 when (result) {

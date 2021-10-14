@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Thundergram</string>
+    <string name="phone_number">Enter phone number</string>
+    <string name="enter_code">Enter code</string>
+    <string name="enter_password">Enter password</string>
+    <string name="login_description_text">To enter the application you must have a Telegram account. Also, you must have access to the messenger to receive the verification code.</string>
+    <string name="russian_phone_code">+7</string>
+    <string name="system_language">en</string>
+    <string name="send">Send</string>
 </resources>

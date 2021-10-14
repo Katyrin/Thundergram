@@ -11,7 +11,7 @@ import org.drinkless.td.libcore.telegram.TdApi.DatabaseStatistics
  *
  * @param encryptionKey Encryption key to check or set up.
  */
-suspend fun TelegramFlow.checkDatabaseEncryptionKey(encryptionKey: ByteArray?): Unit =
+suspend fun TelegramFlow.checkDatabaseEncryptionKey(encryptionKey: ByteArray? = null): Unit =
     sendFunctionLaunch(TdApi.CheckDatabaseEncryptionKey(encryptionKey))
 
 /**
