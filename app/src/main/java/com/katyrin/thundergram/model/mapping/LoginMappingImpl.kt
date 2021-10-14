@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class LoginMappingImpl @Inject constructor() : LoginMapping {
 
-    override suspend fun mapAuthorizationStateToLoginState(
+    override fun mapAuthorizationStateToLoginState(
         authorizationState: TdApi.AuthorizationState
     ): AuthState? = when (authorizationState) {
         is TdApi.AuthorizationStateReady -> AuthState.LoggedIn

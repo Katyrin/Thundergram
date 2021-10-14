@@ -4,7 +4,7 @@ import com.katyrin.thundergram.viewmodel.appstates.AuthState
 import org.drinkless.td.libcore.telegram.TdApi
 
 interface LoginMapping {
-    suspend fun mapAuthorizationStateToLoginState(
+    fun mapAuthorizationStateToLoginState(
         authorizationState: TdApi.AuthorizationState
     ): AuthState?
 }

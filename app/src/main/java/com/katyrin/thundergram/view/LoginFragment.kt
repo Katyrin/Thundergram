@@ -2,6 +2,7 @@ package com.katyrin.thundergram.view
 
 import android.os.Bundle
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,8 @@ import androidx.navigation.NavDirections
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.FragmentLoginBinding
 import com.katyrin.thundergram.utils.toast
+import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
+import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
 import com.katyrin.thundergram.viewmodel.LoginViewModel
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
 import javax.inject.Inject
@@ -53,21 +56,35 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     private fun setEnterPhoneState() {
         binding?.apply {
+            val phoneNumberValidator = PhoneNumberValidator()
+            numberEditText.addTextChangedListener(phoneNumberValidator)
             numberEditText.setHint(R.string.phone_number)
             numberInputLayout.setHint(R.string.phone_number)
             numberEditText.setText(R.string.russian_phone_code)
             numberEditText.inputType = InputType.TYPE_CLASS_PHONE
-            sendButton.setOnClickListener { viewModel.sendPhone(numberEditText.text.toString()) }
+            sendButton.setOnClickListener {
+                if (phoneNumberValidator.isValid) {
+                    viewModel.sendPhone(numberEditText.text.toString())
+                    numberEditText.removeTextChangedListener(phoneNumberValidator)
+                }
+            }
         }
     }
 
     private fun setEnterCodeState() {
         binding?.apply {
+            val loginCodeValidator = LoginCodeValidator()
+            numberEditText.addTextChangedListener(loginCodeValidator)
             numberEditText.setHint(R.string.enter_code)
             numberInputLayout.setHint(R.string.enter_code)
             numberEditText.setText("")
             numberEditText.inputType = InputType.TYPE_CLASS_NUMBER
-            sendButton.setOnClickListener { viewModel.sendCode(numberEditText.text.toString()) }
+            sendButton.setOnClickListener {
+                if (loginCodeValidator.isValid) {
+                    viewModel.sendCode(numberEditText.text.toString())
+                    numberEditText.removeTextChangedListener(loginCodeValidator)
+                }
+            }
         }
     }
 
