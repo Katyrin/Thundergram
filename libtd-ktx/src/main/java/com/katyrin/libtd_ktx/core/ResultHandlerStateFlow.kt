@@ -14,6 +14,9 @@ class ResultHandlerStateFlow(
 ) : TelegramFlow.ResultHandlerFlow, Flow<TdApi.Object> by stateFlow.filterNotNull() {
 
     override fun onResult(result: TdApi.Object?) {
-        stateFlow.value = result
+        when (result) {
+            is TdApi.UpdateNewMessage -> stateFlow.value = result
+            is TdApi.UpdateAuthorizationState -> stateFlow.value = result
+        }
     }
 }

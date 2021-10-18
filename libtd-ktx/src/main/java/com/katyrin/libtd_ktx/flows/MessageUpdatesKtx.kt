@@ -3,25 +3,13 @@ package com.katyrin.libtd_ktx.flows
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
-import org.drinkless.td.libcore.telegram.TdApi
-import org.drinkless.td.libcore.telegram.TdApi.Message
-import org.drinkless.td.libcore.telegram.TdApi.UpdateDeleteMessages
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageContent
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageContentOpened
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageEdited
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageLiveLocationViewed
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageMentionRead
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageSendAcknowledged
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageSendFailed
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageSendSucceeded
-import org.drinkless.td.libcore.telegram.TdApi.UpdateMessageViews
-import org.drinkless.td.libcore.telegram.TdApi.UpdateUnreadMessageCount
+import org.drinkless.td.libcore.telegram.TdApi.*
 
 /**
  * emits [Message] if a new message was received; can also be an outgoing message.
  */
 fun TelegramFlow.newMessageFlow(): Flow<Message> =
-    getUpdatesFlowOfType<TdApi.UpdateNewMessage>().mapNotNull { it.message }
+    getUpdatesFlowOfType<UpdateNewMessage>().mapNotNull { it.message }
 
 /**
  * emits [UpdateMessageSendAcknowledged] if a request to send a message has reached the Telegram

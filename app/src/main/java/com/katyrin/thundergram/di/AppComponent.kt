@@ -1,6 +1,7 @@
 package com.katyrin.thundergram.di
 
 import android.content.Context
+import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.thundergram.App
 import com.katyrin.thundergram.di.modules.ChatListModule
 import com.katyrin.thundergram.di.modules.LoginModule
@@ -27,6 +28,9 @@ interface AppComponent : AndroidInjector<App> {
 
         @BindsInstance
         fun withContext(context: Context): Builder
+
+        @BindsInstance
+        fun withTelegramFlow(telegramFlow: TelegramFlow): Builder
 
         fun build(): AppComponent
     }
