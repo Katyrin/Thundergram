@@ -6,6 +6,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
         <entry key="app/src/main/res/layout/fragment_chat_list.xml" value="0.15715579710144928" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_chat_list.xml" value="0.14583333333333334" />
       </map>
     </option>
   </component>

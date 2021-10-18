@@ -3,7 +3,6 @@ package com.katyrin.thundergram.di.modules
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
-import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.di.ViewModelFactory
 import com.katyrin.thundergram.model.storage.Storage
@@ -25,9 +24,6 @@ interface MainModule {
     fun bindStorage(storageImpl: StorageImpl): Storage
 
     companion object {
-        @Provides
-        @Singleton
-        fun provideTelegramFlow(): TelegramFlow = TelegramFlow().apply { attachClient() }
 
         @Provides
         @Singleton
@@ -42,7 +38,7 @@ interface MainModule {
                 useFileDatabase = true
                 systemLanguageCode = context.getString(R.string.system_language)
                 deviceModel = "Android"
-                systemVersion = "Example"
+                systemVersion = "Thundergram"
                 applicationVersion = "1.0"
                 enableStorageOptimizer = true
             }

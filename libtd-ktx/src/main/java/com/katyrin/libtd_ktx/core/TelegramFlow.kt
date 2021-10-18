@@ -1,5 +1,6 @@
 package com.katyrin.libtd_ktx.core
 
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.filterIsInstance
@@ -40,8 +41,8 @@ class TelegramFlow(
     /**
      * Return data flow from Telegram API of the given type [T]
      */
-    inline fun <reified T : TdApi.Object> getUpdatesFlowOfType() =
-        buffer(64).filterIsInstance<T>()
+    inline fun <reified T : TdApi.Object> getUpdatesFlowOfType(): Flow<T> =
+        buffer(64, BufferOverflow.DROP_OLDEST).filterIsInstance()
 
     /**
      * Sends a request to the TDLib and expect a result.

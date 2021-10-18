@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.katyrin.thundergram.di.ViewModelKey
 import com.katyrin.thundergram.model.repository.ChatListRepository
 import com.katyrin.thundergram.model.repository.ChatListRepositoryImpl
-import com.katyrin.thundergram.view.ChatListFragment
+import com.katyrin.thundergram.view.chatlist.ChatListFragment
 import com.katyrin.thundergram.viewmodel.ChatListViewModel
 import dagger.Binds
 import dagger.Module
