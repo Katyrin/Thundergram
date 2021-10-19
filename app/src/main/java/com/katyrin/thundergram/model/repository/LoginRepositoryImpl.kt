@@ -6,7 +6,9 @@ import com.katyrin.libtd_ktx.flows.authorizationStateFlow
 import com.katyrin.thundergram.model.mapping.LoginMapping
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.drinkless.td.libcore.telegram.TdApi
@@ -16,6 +18,7 @@ class LoginRepositoryImpl @Inject constructor(
     private val parameters: TdApi.TdlibParameters,
     private val loginMapping: LoginMapping,
     private val storage: Storage,
+    private val dispatcher: CoroutineDispatcher,
     override val api: TelegramFlow
 ) : LoginRepository {
 
@@ -30,6 +33,7 @@ class LoginRepositoryImpl @Inject constructor(
         api.authorizationStateFlow()
             .onEach(::checkRequiredParams)
             .map(loginMapping::mapAuthorizationStateToLoginState)
+            .flowOn(dispatcher)
 
     override fun getLogged(): Boolean = storage.getLogged()
 

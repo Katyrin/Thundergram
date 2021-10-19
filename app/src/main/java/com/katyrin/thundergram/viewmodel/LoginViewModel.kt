@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.katyrin.thundergram.model.repository.LoginRepository
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,7 +16,8 @@ class LoginViewModel @Inject constructor(
 
     val errorState: MutableLiveData<String> = MutableLiveData<String>()
 
-    val authState: LiveData<AuthState?> = loginRepository.getAuthFlow().asLiveData()
+    val authState: LiveData<AuthState?> =
+        loginRepository.getAuthFlow().flowOn(Dispatchers.Main).asLiveData()
 
     private val mutableLoggedState: MutableLiveData<Boolean> = MutableLiveData()
     val loggedState: LiveData<Boolean>

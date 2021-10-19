@@ -1,4 +1,4 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.simple_unit_tests
 
 import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
