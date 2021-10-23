@@ -3,22 +3,21 @@ package com.katyrin.thundergram.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
+import com.katyrin.thundergram.viewmodel.appstates.LoginScreenState
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor() : BaseViewModel() {
 
-    val errorState: MutableLiveData<String> = MutableLiveData<String>()
+    private val mutableLiveData: MutableLiveData<LoginScreenState> = MutableLiveData()
+    val liveData: LiveData<LoginScreenState>
+        get() = mutableLiveData
 
     private val mutableAuthState: MutableLiveData<AuthState?> = MutableLiveData()
     val authState: LiveData<AuthState?>
         get() = mutableAuthState
 
-    private val mutableLoggedState: MutableLiveData<Boolean> = MutableLiveData()
-    val loggedState: LiveData<Boolean>
-        get() = mutableLoggedState
-
     override fun handleError(error: Throwable) {
-        errorState.value = error.message
+        mutableLiveData.value = LoginScreenState.Error(error.message)
     }
 
 
@@ -30,12 +29,16 @@ class LoginViewModel @Inject constructor() : BaseViewModel() {
         mutableAuthState.value = AuthState.LoggedIn
     }
 
+    fun resendAuthenticationCode() {
+        mutableAuthState.value = AuthState.EnterCode
+    }
+
     fun sendPassword(password: String) {}
 
     fun setLogged(isLogged: Boolean) {}
 
     init {
-        mutableLoggedState.value = false
+        mutableLiveData.value = LoginScreenState.NotLoggedState
         mutableAuthState.value = AuthState.EnterPhone
     }
 }

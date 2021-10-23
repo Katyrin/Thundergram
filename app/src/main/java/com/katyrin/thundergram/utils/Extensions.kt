@@ -1,5 +1,7 @@
 package com.katyrin.thundergram.utils
 
+import android.app.Activity
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -18,4 +20,12 @@ fun ImageView.setChatIconFromUri(uri: String?, placeholder: Int = R.drawable.ic_
         .error(R.drawable.ic_user_no_photo)
         .circleCrop()
         .into(this)
+}
+
+fun Fragment.hideKeyboard() {
+    view?.let {
+        val inputMethodManager =
+            activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+    }
 }

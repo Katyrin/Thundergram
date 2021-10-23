@@ -5,12 +5,14 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.FragmentLoginBinding
+import com.katyrin.thundergram.utils.hideKeyboard
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
@@ -76,12 +78,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             numberEditText.inputType = InputType.TYPE_CLASS_PHONE
             numberEditText.addTextChangedListener(phoneNumberValidator)
             sendButton.setOnClickListener { clickSendButtonEnterPhone(phoneNumberValidator) }
+            numberEditText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE)
+                    clickSendButtonEnterPhone(phoneNumberValidator)
+                false
+            }
         }
     }
 
     private fun clickSendButtonEnterPhone(phoneNumberValidator: PhoneNumberValidator) {
         binding?.apply {
             if (phoneNumberValidator.isValid) {
+                hideKeyboard()
                 viewModel.sendPhone(numberEditText.text.toString())
                 numberEditText.removeTextChangedListener(phoneNumberValidator)
                 setVisibilityRepeatButton(true)
@@ -99,6 +107,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             numberEditText.setText("")
             numberEditText.inputType = InputType.TYPE_CLASS_NUMBER
             sendButton.setOnClickListener { clickSendButtonCode(loginCodeValidator) }
+            numberEditText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) clickSendButtonCode(loginCodeValidator)
+                false
+            }
         }
     }
 
