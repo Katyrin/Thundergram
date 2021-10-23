@@ -29,6 +29,9 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun sendPassword(password: String): Unit =
         api.checkAuthenticationPassword(password)
 
+    override suspend fun resendAuthenticationCode(): Unit =
+        api.resendAuthenticationCode()
+
     override fun getAuthFlow(): Flow<AuthState?> =
         api.authorizationStateFlow()
             .onEach(::checkRequiredParams)

@@ -9,6 +9,7 @@ interface LoginRepository : UserKtx, ChatKtx {
     suspend fun sendPhone(phone: String)
     suspend fun sendCode(code: String)
     suspend fun sendPassword(password: String)
+    suspend fun resendAuthenticationCode()
     fun getAuthFlow(): Flow<AuthState?>
     fun getLogged(): Boolean
     fun setLogged(isLogged: Boolean)

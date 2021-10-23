@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.katyrin.thundergram.model.repository.LoginRepository
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
+import com.katyrin.thundergram.viewmodel.appstates.LoginScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -14,17 +15,15 @@ class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository
 ) : BaseViewModel() {
 
-    val errorState: MutableLiveData<String> = MutableLiveData<String>()
+    private val mutableLiveData: MutableLiveData<LoginScreenState> = MutableLiveData()
+    val liveData: LiveData<LoginScreenState>
+        get() = mutableLiveData
 
     val authState: LiveData<AuthState?> =
         loginRepository.getAuthFlow().flowOn(Dispatchers.Main).asLiveData()
 
-    private val mutableLoggedState: MutableLiveData<Boolean> = MutableLiveData()
-    val loggedState: LiveData<Boolean>
-        get() = mutableLoggedState
-
     override fun handleError(error: Throwable) {
-        errorState.value = error.message
+        mutableLiveData.value = LoginScreenState.Error(error.message)
     }
 
     fun sendPhone(phone: String) {
@@ -37,6 +36,11 @@ class LoginViewModel @Inject constructor(
         viewModelCoroutineScope.launch { loginRepository.sendCode(code) }
     }
 
+    fun resendAuthenticationCode() {
+        cancelJob()
+        viewModelCoroutineScope.launch { loginRepository.resendAuthenticationCode() }
+    }
+
     fun sendPassword(password: String) {
         cancelJob()
         viewModelCoroutineScope.launch { loginRepository.sendPassword(password) }
@@ -45,6 +49,9 @@ class LoginViewModel @Inject constructor(
     fun setLogged(isLogged: Boolean): Unit = loginRepository.setLogged(isLogged)
 
     init {
-        mutableLoggedState.postValue(loginRepository.getLogged())
+        mutableLiveData.postValue(
+            if (loginRepository.getLogged()) LoginScreenState.LoggedState
+            else LoginScreenState.NotLoggedState
+        )
     }
 }

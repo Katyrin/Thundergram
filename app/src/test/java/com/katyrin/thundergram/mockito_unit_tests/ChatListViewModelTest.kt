@@ -45,7 +45,7 @@ class ChatListViewModelTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(mainThreadSurrogate)
-        chatListViewModel = ChatListViewModel(chatListRepository)
+        chatListViewModel = ChatListViewModel()
     }
 
     @After

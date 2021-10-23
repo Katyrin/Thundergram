@@ -16,7 +16,7 @@ import org.drinkless.td.libcore.telegram.TdApi.PhoneNumberAuthenticationSettings
  */
 suspend fun TelegramFlow.changePhoneNumber(
     phoneNumber: String?,
-    settings: PhoneNumberAuthenticationSettings?
+    settings: PhoneNumberAuthenticationSettings? = null
 ): AuthenticationCodeInfo = sendFunctionAsync(TdApi.ChangePhoneNumber(phoneNumber, settings))
 
 /**

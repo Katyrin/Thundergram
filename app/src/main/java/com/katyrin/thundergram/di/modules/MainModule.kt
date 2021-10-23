@@ -30,7 +30,7 @@ interface MainModule {
         @SuppressLint("SdCardPath")
         fun provideTdlibParameters(context: Context): TdApi.TdlibParameters =
             TdApi.TdlibParameters().apply {
-                databaseDirectory = "/data/user/0/com.katyrin.thundergram/files/td"
+                databaseDirectory = "/data/user/0/com.katyrin.thundergram.real/files/td"
                 useMessageDatabase = false
                 useSecretChats = false
                 apiId = 7305022

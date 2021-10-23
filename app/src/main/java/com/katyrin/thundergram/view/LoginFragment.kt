@@ -2,10 +2,10 @@ package com.katyrin.thundergram.view
 
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
@@ -16,6 +16,7 @@ import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
 import com.katyrin.thundergram.viewmodel.LoginViewModel
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
+import com.katyrin.thundergram.viewmodel.appstates.LoginScreenState
 import javax.inject.Inject
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
@@ -32,42 +33,61 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.authState.observe(viewLifecycleOwner, ::renderAuthState)
-        viewModel.errorState.observe(viewLifecycleOwner, ::toast)
-        viewModel.loggedState.observe(viewLifecycleOwner, ::renderLoggedState)
+        viewModel.liveData.observe(viewLifecycleOwner, ::renderLoginScreenState)
+        initViews()
     }
 
-    private fun renderAuthState(authState: AuthState?) {
-        if (authState == null) return
-        when (authState) {
-            is AuthState.EnterPhone -> setEnterPhoneState()
-            is AuthState.EnterCode -> setEnterCodeState()
-            is AuthState.EnterPassword -> setEnterPasswordState()
-            is AuthState.LoggedIn -> {
-                viewModel.setLogged(true)
-                openChatListScreen()
+    private fun initViews() {
+        binding?.apply {
+            changePhoneButton.setOnClickListener { setEnterPhoneState() }
+            sendSmsCodeButton.setOnClickListener {
+                viewModel.resendAuthenticationCode()
+                sendSmsCodeButton.isVisible = false
             }
         }
     }
 
-    private fun renderLoggedState(isLogged: Boolean) {
-        if (isLogged) openChatListScreen()
-        else setEnterPhoneState()
+    private fun renderLoginScreenState(loginScreenState: LoginScreenState): Unit =
+        when (loginScreenState) {
+            is LoginScreenState.Error -> loginScreenState.message?.let { toast(it) } ?: Unit
+            is LoginScreenState.LoggedState -> openChatListScreen()
+            is LoginScreenState.NotLoggedState -> setEnterPhoneState()
+        }
+
+    private fun renderAuthState(authState: AuthState?): Unit = when (authState) {
+        is AuthState.EnterPhone -> setEnterPhoneState()
+        is AuthState.EnterCode -> setEnterCodeState()
+        is AuthState.EnterPassword -> setEnterPasswordState()
+        is AuthState.LoggedIn -> setLoggedInState()
+        null -> Unit
+    }
+
+    private fun setLoggedInState() {
+        viewModel.setLogged(true)
+        openChatListScreen()
     }
 
     private fun setEnterPhoneState() {
+        val phoneNumberValidator = PhoneNumberValidator()
+        setVisibilityRepeatButton(false)
         binding?.apply {
-            val phoneNumberValidator = PhoneNumberValidator()
-            numberEditText.addTextChangedListener(phoneNumberValidator)
-            numberEditText.setHint(R.string.phone_number)
             numberInputLayout.setHint(R.string.phone_number)
-            numberEditText.setText(R.string.russian_phone_code)
+            numberEditText.setText(R.string.char_plus)
             numberEditText.inputType = InputType.TYPE_CLASS_PHONE
-            sendButton.setOnClickListener {
-                if (phoneNumberValidator.isValid) {
-                    viewModel.sendPhone(numberEditText.text.toString())
-                    numberEditText.removeTextChangedListener(phoneNumberValidator)
-                }
-            }
+            numberEditText.addTextChangedListener(phoneNumberValidator)
+            sendButton.setOnClickListener { clickSendButtonEnterPhone(phoneNumberValidator) }
+        }
+    }
+
+    private fun clickSendButtonEnterPhone(phoneNumberValidator: PhoneNumberValidator) {
+        binding?.apply {
+            if (phoneNumberValidator.isValid) {
+                viewModel.sendPhone(numberEditText.text.toString())
+                numberEditText.removeTextChangedListener(phoneNumberValidator)
+                setVisibilityRepeatButton(true)
+                numberInputLayout.helperText = ""
+            } else
+                numberInputLayout.helperText = requireContext().getText(R.string.helper_text_phone)
         }
     }
 
@@ -75,27 +95,37 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         binding?.apply {
             val loginCodeValidator = LoginCodeValidator()
             numberEditText.addTextChangedListener(loginCodeValidator)
-            numberEditText.setHint(R.string.enter_code)
             numberInputLayout.setHint(R.string.enter_code)
             numberEditText.setText("")
             numberEditText.inputType = InputType.TYPE_CLASS_NUMBER
-            sendButton.setOnClickListener {
-                if (loginCodeValidator.isValid) {
-                    viewModel.sendCode(numberEditText.text.toString())
-                    numberEditText.removeTextChangedListener(loginCodeValidator)
-                }
-            }
+            sendButton.setOnClickListener { clickSendButtonCode(loginCodeValidator) }
+        }
+    }
+
+    private fun clickSendButtonCode(loginCodeValidator: LoginCodeValidator) {
+        binding?.apply {
+            if (loginCodeValidator.isValid) {
+                viewModel.sendCode(numberEditText.text.toString())
+                numberEditText.removeTextChangedListener(loginCodeValidator)
+                numberInputLayout.helperText = ""
+            } else
+                numberInputLayout.helperText = requireContext().getText(R.string.helper_text_code)
         }
     }
 
     private fun setEnterPasswordState() {
+        setVisibilityRepeatButton(false)
         binding?.apply {
-            numberEditText.setHint(R.string.enter_password)
             numberInputLayout.setHint(R.string.enter_password)
             numberEditText.setText("")
             numberEditText.inputType = InputType.TYPE_CLASS_TEXT
             sendButton.setOnClickListener { viewModel.sendPassword(numberEditText.text.toString()) }
         }
+    }
+
+    private fun setVisibilityRepeatButton(isVisible: Boolean) {
+        binding?.changePhoneButton?.isVisible = isVisible
+        binding?.sendSmsCodeButton?.isVisible = isVisible
     }
 
     private fun openChatListScreen() {
