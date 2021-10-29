@@ -1,4 +1,4 @@
-package com.katyrin.thundergram.myview
+package com.katyrin.thundergram.kaspresso.myview
 
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.assertion.ViewAssertions

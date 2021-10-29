@@ -1,7 +1,8 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.kaspresso
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.katyrin.thundergram.R
 import com.katyrin.thundergram.view.MainActivity
 import org.junit.Rule
 import org.junit.Test

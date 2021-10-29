@@ -66,7 +66,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     private fun setLoggedInState() {
         viewModel.setLogged(true)
-        openChatListScreen()
+        //openChatListScreen()
     }
 
     private fun setEnterPhoneState() {

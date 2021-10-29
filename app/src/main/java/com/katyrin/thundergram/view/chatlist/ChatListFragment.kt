@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDirections
 import com.katyrin.thundergram.databinding.FragmentChatListBinding
 import com.katyrin.thundergram.model.entities.ChatListItem
 import com.katyrin.thundergram.utils.toast
@@ -34,7 +35,13 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     }
 
     private fun initViews() {
-        binding?.recyclerChatList?.adapter = ChatListAdapter()
+        binding?.recyclerChatList?.adapter = ChatListAdapter(::openChat)
+    }
+
+    private fun openChat(chatId: Long) {
+        val navDirections: NavDirections =
+            ChatListFragmentDirections.actionChatListFragmentToChatFragment(chatId)
+        navController?.navigate(navDirections)
     }
 
     private fun renderData(chatListState: ChatListState): Unit? = when (chatListState) {

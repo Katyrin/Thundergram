@@ -1,4 +1,4 @@
-package com.katyrin.thundergram.myview
+package com.katyrin.thundergram.kaspresso.myview
 
 import android.view.View
 import com.google.android.material.textfield.TextInputLayout

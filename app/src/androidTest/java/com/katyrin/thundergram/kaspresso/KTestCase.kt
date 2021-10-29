@@ -1,4 +1,4 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.kaspresso
 
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.BaseTestCase

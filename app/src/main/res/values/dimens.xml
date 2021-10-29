@@ -6,8 +6,13 @@
     <dimen name="stroke_height">1dp</dimen>
     <dimen name="margin_image_normal">8dp</dimen>
     <dimen name="margin_text_normal">8dp</dimen>
-    <dimen name="size_chat_image">60dp</dimen>
+    <dimen name="size_chat_image">50dp</dimen>
 
     <dimen name="text_size_chat_name_normal">24sp</dimen>
+
+    // inner chat
+    <dimen name="margin_start_icon">4dp</dimen>
+    <dimen name="padding_message_item">8dp</dimen>
+    <dimen name="corner_radius_message">16dp</dimen>
 
 </resources>

@@ -56,7 +56,7 @@ suspend fun TelegramFlow.canTransferOwnership(): CanTransferOwnershipResult =
  * properly closed. After the close completes, updateAuthorizationState with authorizationStateClosed
  * will be sent.
  */
-suspend fun TelegramFlow.close(): Unit = sendFunctionLaunch(TdApi.Close())
+suspend fun TelegramFlow.closeApi(): Unit = sendFunctionLaunch(TdApi.Close())
 
 /**
  * Suspend function, which deletes saved credentials for all payment provider bots.

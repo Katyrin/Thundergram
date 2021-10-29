@@ -4,6 +4,7 @@ import android.content.Context
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.thundergram.App
 import com.katyrin.thundergram.di.modules.ChatListModule
+import com.katyrin.thundergram.di.modules.ChatModule
 import com.katyrin.thundergram.di.modules.LoginModule
 import com.katyrin.thundergram.di.modules.MainModule
 import dagger.BindsInstance
@@ -18,7 +19,8 @@ import javax.inject.Singleton
         AndroidInjectionModule::class,
         LoginModule::class,
         MainModule::class,
-        ChatListModule::class
+        ChatListModule::class,
+        ChatModule::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

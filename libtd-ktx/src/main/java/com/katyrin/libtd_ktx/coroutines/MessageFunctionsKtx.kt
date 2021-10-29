@@ -338,7 +338,7 @@ suspend fun TelegramFlow.getMessageLocally(chatId: Long, messageId: Long): Messa
  *
  * @return [Messages] Contains a list of messages.
  */
-suspend fun TelegramFlow.getMessages(chatId: Long, messageIds: LongArray?): Messages =
+suspend fun TelegramFlow.getMessages(chatId: Long, messageIds: LongArray? = null): Messages =
     sendFunctionAsync(GetMessages(chatId, messageIds))
 
 /**

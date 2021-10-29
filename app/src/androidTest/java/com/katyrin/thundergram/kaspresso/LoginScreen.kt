@@ -1,8 +1,8 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.kaspresso
 
-import com.katyrin.thundergram.myview.MyKTextInputLayout
+import com.katyrin.thundergram.R
+import com.katyrin.thundergram.kaspresso.myview.MyKTextInputLayout
 import io.github.kakaocup.kakao.edit.KEditText
-import io.github.kakaocup.kakao.edit.KTextInputLayout
 import io.github.kakaocup.kakao.screen.Screen
 import io.github.kakaocup.kakao.text.KButton
 import io.github.kakaocup.kakao.text.KTextView
