@@ -1,5 +1,6 @@
 package com.katyrin.thundergram.kaspresso
 
+import FLAKY_SAFETY_TIMEOUT
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.BaseTestCase
 
@@ -12,8 +13,6 @@ abstract class KTestCase(
 ) {
 
     private companion object {
-        const val FLAKY_SAFETY_TIMEOUT = 3000L
-
         fun getBuilder(): Kaspresso.Builder =
             Kaspresso.Builder.simple().apply {
                 flakySafetyParams.timeoutMs = FLAKY_SAFETY_TIMEOUT

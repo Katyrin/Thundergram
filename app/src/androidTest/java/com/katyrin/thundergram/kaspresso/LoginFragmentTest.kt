@@ -1,5 +1,8 @@
 package com.katyrin.thundergram.kaspresso
 
+import FALSE_CODE
+import NORMAL_CODE
+import NORMAL_NUMBER
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.katyrin.thundergram.R
@@ -77,7 +80,7 @@ class LoginFragmentTest : KTestCase() {
                         click()
                         hasText("+755544433221")
                         clearText()
-                        typeText("+75554443322")
+                        typeText(NORMAL_NUMBER)
                     }
                     closeSoftKeyboard()
                     sendButtonView {
@@ -111,7 +114,7 @@ class LoginFragmentTest : KTestCase() {
                         hasHint(R.string.enter_code)
                         click()
                         hasText("")
-                        typeText("123456")
+                        typeText(FALSE_CODE)
                     }
                     closeSoftKeyboard()
                     sendButtonView {
@@ -126,9 +129,9 @@ class LoginFragmentTest : KTestCase() {
                         isDisplayed()
                         hasHint(R.string.enter_code)
                         click()
-                        hasText("123456")
+                        hasText(FALSE_CODE)
                         clearText()
-                        typeText("12345")
+                        typeText(NORMAL_CODE)
                     }
                     closeSoftKeyboard()
                     sendButtonView {
