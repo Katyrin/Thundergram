@@ -2,11 +2,8 @@ package com.katyrin.thundergram.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import com.katyrin.thundergram.model.repository.ChatListRepository
+import com.katyrin.thundergram.model.entities.ChatListItem
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +22,15 @@ class ChatListViewModel @Inject constructor() : BaseViewModel() {
     fun getChats() {
         cancelJob()
         viewModelCoroutineScope.launch {
-            mutableLiveData.value = ChatListState.Success(listOf())
+            mutableLiveData.value = ChatListState.Success(getChatList())
         }
+    }
+
+    private fun getChatList(): List<ChatListItem> = mutableListOf<ChatListItem>().apply {
+        for (i in 1..100) add(ChatListItem(i.toLong(), "$CHAT_NAME$i", ""))
+    }
+
+    private companion object {
+        const val CHAT_NAME = "Chat name: "
     }
 }

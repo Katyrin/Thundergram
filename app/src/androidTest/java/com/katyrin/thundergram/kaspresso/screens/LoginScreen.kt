@@ -1,4 +1,4 @@
-package com.katyrin.thundergram.kaspresso
+package com.katyrin.thundergram.kaspresso.screens
 
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.kaspresso.myview.MyKTextInputLayout

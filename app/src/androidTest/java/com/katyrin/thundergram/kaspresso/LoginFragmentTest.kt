@@ -6,6 +6,9 @@ import NORMAL_NUMBER
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.katyrin.thundergram.R
+import com.katyrin.thundergram.kaspresso.screens.ChatListScreen
+import com.katyrin.thundergram.kaspresso.screens.ChatScreen
+import com.katyrin.thundergram.kaspresso.screens.LoginScreen
 import com.katyrin.thundergram.view.MainActivity
 import org.junit.Rule
 import org.junit.Test
@@ -137,6 +140,61 @@ class LoginFragmentTest : KTestCase() {
                     sendButtonView {
                         isDisplayed()
                         click()
+                    }
+                }
+            }
+            step("Check chat list screen") {
+                ChatListScreen {
+                    recyclerChatListView {
+                        isDisplayed()
+                        childAt<ChatListScreen.ChatItem>(54) {
+                            chatImageView {
+                                isDisplayed()
+                            }
+                            chatNameView {
+                                isDisplayed()
+                                hasText("Chat name: 55")
+                            }
+                        }
+                        childAt<ChatListScreen.ChatItem>(77) {
+                            chatImageView {
+                                isDisplayed()
+                            }
+                            chatNameView {
+                                isDisplayed()
+                                hasText("Chat name: 78")
+                            }
+                            click()
+                        }
+                    }
+                }
+            }
+            step("Check chat screen") {
+                ChatScreen {
+                    chatTextInputLayoutView {
+                        isDisplayed()
+                        hasHint("Enter message")
+                    }
+                    chatRecyclerView {
+                        isDisplayed()
+                        childAt<ChatScreen.MyTextMessageItem>(22) {
+                            userImageView {
+                                isDisplayed()
+                            }
+                            messageTextView {
+                                isDisplayed()
+                                hasText("This is simple message number 23")
+                            }
+                        }
+                        childAt<ChatScreen.UserTextMessageItem>(91) {
+                            userImageView {
+                                isDisplayed()
+                            }
+                            messageTextView {
+                                isDisplayed()
+                                hasText("This is simple message number 92")
+                            }
+                        }
                     }
                 }
             }
