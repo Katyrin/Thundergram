@@ -8,14 +8,18 @@
 
     <TextView
         android:id="@+id/message_text_view"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_bottom_half_image"
         android:background="@drawable/background_my_message"
         android:padding="@dimen/margin_edge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/user_image_view"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Here will be message" />
+        tools:text="Here will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be message" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/user_image_view"

@@ -38,8 +38,6 @@ class LoginRepositoryImpl @Inject constructor(
             .map(loginMapping::mapAuthorizationStateToLoginState)
             .flowOn(dispatcher)
 
-    override fun getLogged(): Boolean = storage.getLogged()
-
     override fun setLogged(isLogged: Boolean): Unit = storage.setLogged(isLogged)
 
     private suspend fun checkRequiredParams(state: TdApi.AuthorizationState?) {

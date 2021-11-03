@@ -13,12 +13,10 @@ import androidx.navigation.NavDirections
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.FragmentLoginBinding
 import com.katyrin.thundergram.utils.hideKeyboard
-import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
 import com.katyrin.thundergram.viewmodel.LoginViewModel
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
-import com.katyrin.thundergram.viewmodel.appstates.LoginScreenState
 import javax.inject.Inject
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
@@ -35,7 +33,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.authState.observe(viewLifecycleOwner, ::renderAuthState)
-        viewModel.liveData.observe(viewLifecycleOwner, ::renderLoginScreenState)
         initViews()
     }
 
@@ -49,13 +46,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
     }
 
-    private fun renderLoginScreenState(loginScreenState: LoginScreenState): Unit =
-        when (loginScreenState) {
-            is LoginScreenState.Error -> loginScreenState.message?.let { toast(it) } ?: Unit
-            is LoginScreenState.LoggedState -> openChatListScreen()
-            is LoginScreenState.NotLoggedState -> setEnterPhoneState()
-        }
-
     private fun renderAuthState(authState: AuthState?): Unit = when (authState) {
         is AuthState.EnterPhone -> setEnterPhoneState()
         is AuthState.EnterCode -> setEnterCodeState()
@@ -66,7 +56,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     private fun setLoggedInState() {
         viewModel.setLogged(true)
-        //openChatListScreen()
+        openChatListScreen()
     }
 
     private fun setEnterPhoneState() {

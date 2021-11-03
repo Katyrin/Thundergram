@@ -483,9 +483,9 @@ suspend fun TelegramFlow.sendBotStartMessage(
  */
 suspend fun TelegramFlow.sendMessage(
     chatId: Long,
-    replyToMessageId: Long,
-    options: SendMessageOptions?,
-    replyMarkup: ReplyMarkup?,
+    replyToMessageId: Long = 0,
+    options: SendMessageOptions? = null,
+    replyMarkup: ReplyMarkup? = null,
     inputMessageContent: InputMessageContent?
 ): Message = sendFunctionAsync(
     SendMessage(chatId, replyToMessageId, options, replyMarkup, inputMessageContent)

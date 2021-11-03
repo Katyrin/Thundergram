@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.repository.ChatRepository
 import com.katyrin.thundergram.viewmodel.appstates.ChatState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +28,24 @@ class ChatViewModel @Inject constructor(
     fun getMessages(chatId: Long) {
         cancelJob()
         viewModelCoroutineScope.launch {
-            mutableLiveData.value = ChatState.Success(chatRepository.getMessages(chatId))
+            var messages: List<ChatMessage> = listOf()
+            while (messages.size != MAX_MESSAGE_SIZE) {
+                messages = chatRepository.getHistoryMessages(chatId)
+                mutableLiveData.value = ChatState.Success(messages)
+                delay(PAUSE_BETWEEN_REQUEST)
+            }
         }
+    }
+
+    fun sendMessage(chatId: Long, message: String) {
+        cancelJob()
+        viewModelCoroutineScope.launch {
+            chatRepository.sendMessage(chatId, message)
+        }
+    }
+
+    private companion object {
+        const val MAX_MESSAGE_SIZE = 100
+        const val PAUSE_BETWEEN_REQUEST = 3000L
     }
 }
