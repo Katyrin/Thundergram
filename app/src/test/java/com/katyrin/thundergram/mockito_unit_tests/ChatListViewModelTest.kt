@@ -7,7 +7,6 @@ import com.katyrin.thundergram.viewmodel.ChatListViewModel
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
@@ -27,7 +26,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.io.IOException
 
 @RunWith(MockitoJUnitRunner::class)
-@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 class ChatListViewModelTest {
 
@@ -45,7 +43,7 @@ class ChatListViewModelTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(mainThreadSurrogate)
-        chatListViewModel = ChatListViewModel()
+        chatListViewModel = ChatListViewModel(chatListRepository)
     }
 
     @After

@@ -31,7 +31,7 @@ class ChatViewModel @Inject constructor(
             var messages: List<ChatMessage> = listOf()
             while (messages.size != MAX_MESSAGE_SIZE) {
                 messages = chatRepository.getHistoryMessages(chatId)
-                mutableLiveData.value = ChatState.Success(messages)
+                mutableLiveData.value = ChatState.Success(chatRepository.getHistoryMessages(chatId))
                 delay(PAUSE_BETWEEN_REQUEST)
             }
         }
