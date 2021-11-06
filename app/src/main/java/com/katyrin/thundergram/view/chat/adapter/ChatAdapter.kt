@@ -11,7 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 
 class ChatAdapter(
     private val simpleExoPlayer: SimpleExoPlayer,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val onPhoneNumberClick: (String) -> Unit,
+    private val onSubscribeUser: (Long, Long) -> Unit
 ) : ListAdapter<ChatMessage, BaseViewHolder>(DiffCallback()) {
 
     private class DiffCallback : DiffUtil.ItemCallback<ChatMessage>() {
@@ -26,25 +28,43 @@ class ChatAdapter(
         with(LayoutInflater.from(parent.context)) {
             when (viewType) {
                 MY_MESSAGE ->
-                    MyTextMessageHolder(ItemMyTextMessageBinding.inflate(this, parent, false))
+                    MyTextMessageHolder(
+                        ItemMyTextMessageBinding.inflate(this, parent, false),
+                        onPhoneNumberClick,
+                        onSubscribeUser
+                    )
                 USER_MESSAGE ->
-                    UserTextMessageHolder(ItemUserTextMessageBinding.inflate(this, parent, false))
+                    UserTextMessageHolder(
+                        ItemUserTextMessageBinding.inflate(this, parent, false),
+                        onPhoneNumberClick,
+                        onSubscribeUser
+                    )
                 MY_VOICE_MESSAGE ->
                     MyVoiceMessageHolder(
                         coroutineScope,
                         simpleExoPlayer,
-                        ItemMyVoiceMessageBinding.inflate(this, parent, false)
+                        ItemMyVoiceMessageBinding.inflate(this, parent, false),
+                        onSubscribeUser
                     )
                 USER_VOICE_MESSAGE ->
                     UserVoiceMessageHolder(
                         coroutineScope,
                         simpleExoPlayer,
-                        ItemUserVoiceMessageBinding.inflate(this, parent, false)
+                        ItemUserVoiceMessageBinding.inflate(this, parent, false),
+                        onSubscribeUser
                     )
                 MY_PHOTO_MESSAGE ->
-                    MyPhotoMessageHolder(ItemMyPhotoMessageBinding.inflate(this, parent, false))
+                    MyPhotoMessageHolder(
+                        ItemMyPhotoMessageBinding.inflate(this, parent, false),
+                        onPhoneNumberClick,
+                        onSubscribeUser
+                    )
                 else ->
-                    UserPhotoMessageHolder(ItemUserPhotoMessageBinding.inflate(this, parent, false))
+                    UserPhotoMessageHolder(
+                        ItemUserPhotoMessageBinding.inflate(this, parent, false),
+                        onPhoneNumberClick,
+                        onSubscribeUser
+                    )
             }
         }
 

@@ -8,9 +8,11 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.di.ViewModelFactory
 import com.katyrin.thundergram.di.ViewModelKey
+import com.katyrin.thundergram.model.repository.MainRepository
+import com.katyrin.thundergram.model.repository.MainRepositoryImpl
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.model.storage.StorageImpl
-import com.katyrin.thundergram.view.MainActivity
+import com.katyrin.thundergram.view.main.MainActivity
 import com.katyrin.thundergram.viewmodel.MainViewModel
 import dagger.Binds
 import dagger.Module
@@ -30,6 +32,10 @@ interface MainModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @Singleton
+    fun bindMainRepository(mainRepositoryImpl: MainRepositoryImpl): MainRepository
 
     @Binds
     fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

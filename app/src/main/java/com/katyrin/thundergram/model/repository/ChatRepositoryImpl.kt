@@ -25,6 +25,7 @@ class ChatRepositoryImpl @Inject constructor(
                 when (val content: TdApi.MessageContent? = message.content) {
                     is MessageText -> chatMessageList.add(
                         ChatMessage.Text(
+                            chatId,
                             message.senderUserId.toLong(),
                             content.text.text,
                             getUserPhotoPath(message.senderUserId),
@@ -33,6 +34,7 @@ class ChatRepositoryImpl @Inject constructor(
                     )
                     is TdApi.MessageVoiceNote -> chatMessageList.add(
                         ChatMessage.Voice(
+                            chatId,
                             message.senderUserId.toLong(),
                             getVoiceMessagePath(content.voiceNote.voice),
                             getUserPhotoPath(message.senderUserId),
@@ -41,6 +43,7 @@ class ChatRepositoryImpl @Inject constructor(
                     )
                     is TdApi.MessagePhoto -> chatMessageList.add(
                         ChatMessage.Photo(
+                            chatId,
                             message.senderUserId.toLong(),
                             content.caption.text,
                             getPhotoPath(content.photo.sizes[0].photo),
@@ -81,10 +84,6 @@ class ChatRepositoryImpl @Inject constructor(
     private suspend fun getVoiceMessagePath(voiceFile: TdApi.File): String {
         var voicePath = voiceFile.local.path
         if (voicePath == "") voicePath = downloadFile(voiceFile.remote.id)
-        val size = voiceFile.local.downloadedSize
-        val siz2 = voiceFile.remote.uploadedSize
-        siz2.toString()
-        size.toString()
         return voicePath
     }
 

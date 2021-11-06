@@ -1,10 +1,16 @@
 package com.katyrin.thundergram.utils
 
+import android.Manifest.permission.CALL_PHONE
 import android.app.Activity
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.pm.PackageManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.katyrin.thundergram.R
@@ -40,3 +46,24 @@ fun Fragment.hideKeyboard() {
         inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
     }
 }
+
+fun Activity.checkCallPermission(onPermissionGranted: () -> Unit): Unit = when {
+    isCallPermissionGranted() -> onPermissionGranted()
+    shouldShowRequestPermissionRationale(this, CALL_PHONE) -> showRationaleDialog()
+    else -> requestCallPermission()
+}
+
+private fun Activity.isCallPermissionGranted(): Boolean = PackageManager.PERMISSION_GRANTED ==
+        ContextCompat.checkSelfPermission(this, CALL_PHONE)
+
+private fun Activity.showRationaleDialog(): Unit =
+    AlertDialog.Builder(this)
+        .setTitle(getString(R.string.access_to_call))
+        .setMessage(getString(R.string.explanation_get_call))
+        .setPositiveButton(getString(R.string.grant_access)) { _, _ -> requestCallPermission() }
+        .setNegativeButton(getString(R.string.do_not)) { dialog, _ -> dialog.dismiss() }
+        .create()
+        .show()
+
+fun Activity.requestCallPermission(): Unit =
+    requestPermissions(this, arrayOf(CALL_PHONE), REQUEST_CALL_CODE)

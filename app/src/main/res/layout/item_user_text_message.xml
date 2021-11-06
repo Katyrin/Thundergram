@@ -24,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_bottom_half_image"
+        android:autoLink="phone"
         android:background="@drawable/background_message"
         android:padding="@dimen/margin_edge"
         app:layout_constrainedWidth="true"

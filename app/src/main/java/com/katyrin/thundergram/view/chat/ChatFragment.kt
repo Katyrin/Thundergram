@@ -1,25 +1,31 @@
 package com.katyrin.thundergram.view.chat
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.constraintlayout.motion.widget.OnSwipe
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.katyrin.thundergram.databinding.FragmentChatBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.utils.hideKeyboard
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.BaseFragment
 import com.katyrin.thundergram.view.chat.adapter.ChatAdapter
+import com.katyrin.thundergram.view.main.CallListener
+import com.katyrin.thundergram.view.main.MainActivity
+import com.katyrin.thundergram.view.main.ToolBarMotionListener
 import com.katyrin.thundergram.viewmodel.ChatViewModel
 import com.katyrin.thundergram.viewmodel.appstates.ChatState
 import javax.inject.Inject
-import com.google.android.exoplayer2.SimpleExoPlayer
 
 
 class ChatFragment : BaseFragment<FragmentChatBinding>() {
@@ -30,6 +36,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
 
     @Inject
     lateinit var simpleExoPlayer: SimpleExoPlayer
+
+    private var callListener: CallListener? = null
+    private var toolBarMotionListener: ToolBarMotionListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callListener = context as MainActivity
+        toolBarMotionListener = context
+    }
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -44,17 +59,36 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
         viewModel.getNewMessage(getChatId()).observe(viewLifecycleOwner, ::updateList)
     }
 
+    override fun onResume() {
+        super.onResume()
+        toolBarMotionListener?.onChangeSceneTransitionSwipe(OnSwipe.DRAG_DOWN)
+        toolBarMotionListener?.onSetToolBarText(getChatName())
+    }
+
     private fun getChatId(): Long = ChatFragmentArgs.fromBundle(requireArguments()).chatId
+
+    private fun getChatName(): String = ChatFragmentArgs.fromBundle(requireArguments()).chatName
 
     private fun initViews() {
         binding?.apply {
-            chatRecyclerView.adapter = ChatAdapter(simpleExoPlayer, lifecycleScope)
+            chatRecyclerView.adapter =
+                ChatAdapter(simpleExoPlayer, lifecycleScope, ::onPhoneNumberClick, ::openUserMenu)
             chatTextInputLayout.setEndIconOnClickListener { sendMessage() }
             chatInputEditText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()
                 false
             }
         }
+    }
+
+    private fun openUserMenu(chatId: Long, userId: Long) {
+        val navDirections: NavDirections =
+            ChatFragmentDirections.actionChatFragmentToUserMenuDialogFragment(chatId, userId)
+        navController?.navigate(navDirections)
+    }
+
+    private fun onPhoneNumberClick(phoneNumber: String) {
+        callListener?.onPhoneCallNumber(phoneNumber)
     }
 
     private fun sendMessage() {
@@ -85,6 +119,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
                     scrollToPosition(FIRST_POSITION)
                 else super.onItemRangeInserted(positionStart, itemCount)
             }
+    }
+
+    override fun onDestroyView() {
+        callListener = null
+        toolBarMotionListener = null
+        super.onDestroyView()
     }
 
     private companion object {

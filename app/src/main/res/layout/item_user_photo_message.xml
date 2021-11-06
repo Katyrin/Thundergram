@@ -31,9 +31,9 @@
             android:id="@+id/image_card_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/stroke_height"
             android:elevation="0dp"
             app:cardCornerRadius="@dimen/corner_radius_message"
-            android:layout_margin="@dimen/stroke_height"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -53,6 +53,7 @@
             android:id="@+id/message_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="phone"
             android:padding="@dimen/margin_edge"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -2,23 +2,24 @@ package com.katyrin.thundergram.model.repository
 
 import com.katyrin.libtd_ktx.core.TelegramException
 import com.katyrin.libtd_ktx.core.TelegramFlow
-import com.katyrin.libtd_ktx.coroutines.downloadFile
-import com.katyrin.libtd_ktx.coroutines.getChat
-import com.katyrin.libtd_ktx.coroutines.getChats
-import com.katyrin.libtd_ktx.coroutines.getRemoteFile
+import com.katyrin.libtd_ktx.coroutines.*
+import com.katyrin.libtd_ktx.flows.authorizationStateFlow
 import com.katyrin.libtd_ktx.flows.newMessageFlow
 import com.katyrin.thundergram.model.entities.ChatListItem
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.withContext
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
 
 class ChatListRepositoryImpl @Inject constructor(
+    private val parameters: TdApi.TdlibParameters,
     private val dispatcher: CoroutineDispatcher,
     override val api: TelegramFlow
 ) : ChatListRepository {
@@ -50,6 +51,15 @@ class ChatListRepositoryImpl @Inject constructor(
             .map { ChatListState.Success(getChats()) }
             .retryWhen { cause, _ -> (cause is TelegramException).also { if (it) delay(DELAY_1000) } }
             .flowOn(dispatcher)
+
+    override suspend fun getAuthState(): Flow<TdApi.AuthorizationState> =
+        withContext(Dispatchers.IO) { api.authorizationStateFlow() }
+
+    override suspend fun setParameters(): Unit =
+        withContext(Dispatchers.IO) { api.setTdlibParameters(parameters) }
+
+    override suspend fun setEncryptionKey(): Unit =
+        withContext(Dispatchers.IO) { api.checkDatabaseEncryptionKey() }
 
     private companion object {
         const val OFFSET_ORDER = Long.MAX_VALUE

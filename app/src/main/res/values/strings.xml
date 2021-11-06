@@ -15,4 +15,11 @@
     <string name="first_speed">x1</string>
     <string name="second_speed">x2</string>
     <string name="third_speed">x3</string>
+    <string name="access_to_call">Request permission</string>
+    <string name="explanation_get_call">"Requires phone calls permission to use the app in full"</string>
+    <string name="grant_access">"Allow access"</string>
+    <string name="do_not">"Do not"</string>
+    <string name="catch_phone_number">Catch phone number</string>
+    <string name="don_t_catch_phone_number">Don\'t catch phone number</string>
+    <string name="money">Money</string>
 </resources>

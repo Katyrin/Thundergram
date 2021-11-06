@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 class UserVoiceMessageHolder(
     private val coroutineScope: CoroutineScope,
     private val simpleExoPlayer: SimpleExoPlayer,
-    private val itemBinding: ItemUserVoiceMessageBinding
+    private val itemBinding: ItemUserVoiceMessageBinding,
+    private val onSubscribeUser: (chatId: Long, userId: Long) -> Unit
 ) : BaseVoiceViewHolder(simpleExoPlayer, itemBinding.root) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
@@ -34,6 +35,7 @@ class UserVoiceMessageHolder(
             onSeekBarChange(itemBinding.soundSeekBar) {
                 onStartVoice(position, mediaItem, itemBinding.speedTextView)
             }
+            itemBinding.root.setOnClickListener { onSubscribeUser(chatId, userId) }
         }
 
     override fun subscribeAudioProgress(position: Int) {

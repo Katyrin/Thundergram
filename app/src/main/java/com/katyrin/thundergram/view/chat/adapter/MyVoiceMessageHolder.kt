@@ -16,7 +16,8 @@ import javax.inject.Inject
 class MyVoiceMessageHolder @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val simpleExoPlayer: SimpleExoPlayer,
-    private val itemBinding: ItemMyVoiceMessageBinding
+    private val itemBinding: ItemMyVoiceMessageBinding,
+    private val onSubscribeUser: (chatId: Long, userId: Long) -> Unit
 ) : BaseVoiceViewHolder(simpleExoPlayer, itemBinding.root) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
@@ -35,6 +36,7 @@ class MyVoiceMessageHolder @Inject constructor(
             onSeekBarChange(itemBinding.soundSeekBar) {
                 onStartVoice(position, mediaItem, itemBinding.speedTextView)
             }
+            itemBinding.root.setOnClickListener { onSubscribeUser(chatId, userId) }
         }
 
     override fun subscribeAudioProgress(position: Int) {

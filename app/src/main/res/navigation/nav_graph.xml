@@ -2,7 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/userMenuDialogFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -35,6 +36,25 @@
         <argument
             android:name="chatId"
             app:argType="long" />
+        <argument
+            android:name="chatName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_chatFragment_to_userMenuDialogFragment"
+            app:destination="@id/userMenuDialogFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/userMenuDialogFragment"
+        android:name="com.katyrin.thundergram.view.UserMenuDialogFragment"
+        android:label="UserMenuDialogFragment"
+        tools:layout="@layout/dialog_fragment_user_menu">
+        <argument
+            android:name="chatId"
+            app:argType="long" />
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </dialog>
 
 </navigation>

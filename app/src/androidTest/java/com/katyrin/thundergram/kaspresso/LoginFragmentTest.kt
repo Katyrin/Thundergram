@@ -9,7 +9,7 @@ import com.katyrin.thundergram.R
 import com.katyrin.thundergram.kaspresso.screens.ChatListScreen
 import com.katyrin.thundergram.kaspresso.screens.ChatScreen
 import com.katyrin.thundergram.kaspresso.screens.LoginScreen
-import com.katyrin.thundergram.view.MainActivity
+import com.katyrin.thundergram.view.main.MainActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
