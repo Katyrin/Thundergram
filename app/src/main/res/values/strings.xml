@@ -4,7 +4,22 @@
     <string name="enter_code">Enter code</string>
     <string name="enter_password">Enter password</string>
     <string name="login_description_text">To enter the application you must have a Telegram account. Also, you must have access to the messenger to receive the verification code.</string>
-    <string name="russian_phone_code">+7</string>
+    <string name="char_plus">+</string>
     <string name="system_language">en</string>
     <string name="send">Send</string>
+    <string name="change_phone_number">Change phone number</string>
+    <string name="send_sms_code">Send the code as an SMS</string>
+    <string name="helper_text_phone">Check if the number is entered correctly. The number must start with a \"+\" sign, followed by your country code, followed by the main number. Also make sure there are no extra characters or spaces in the number.</string>
+    <string name="helper_text_code">The code must contain 5 numbers, no letters, spaces, or extra characters.</string>
+    <string name="enter_message">Enter message</string>
+    <string name="first_speed">x1</string>
+    <string name="second_speed">x2</string>
+    <string name="third_speed">x3</string>
+    <string name="access_to_call">Request permission</string>
+    <string name="explanation_get_call">"Requires phone calls permission to use the app in full"</string>
+    <string name="grant_access">"Allow access"</string>
+    <string name="do_not">"Do not"</string>
+    <string name="catch_phone_number">Catch phone number</string>
+    <string name="don_t_catch_phone_number">Don\'t catch phone number</string>
+    <string name="money">Money</string>
 </resources>

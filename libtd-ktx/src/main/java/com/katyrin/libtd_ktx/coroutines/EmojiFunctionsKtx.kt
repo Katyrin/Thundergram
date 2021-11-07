@@ -1,7 +1,6 @@
 package com.katyrin.libtd_ktx.coroutines
 
 import com.katyrin.libtd_ktx.core.TelegramFlow
-import org.drinkless.td.libcore.telegram.TdApi
 import org.drinkless.td.libcore.telegram.TdApi.*
 
 /**
@@ -14,7 +13,7 @@ import org.drinkless.td.libcore.telegram.TdApi.*
  * @return [HttpUrl] Contains an HTTP URL.
  */
 suspend fun TelegramFlow.getEmojiSuggestionsUrl(languageCode: String?): HttpUrl =
-    sendFunctionAsync(TdApi.GetEmojiSuggestionsUrl(languageCode))
+    sendFunctionAsync(GetEmojiSuggestionsUrl(languageCode))
 
 /**
  * Suspend function, which returns emoji corresponding to a sticker. The list is only for
@@ -26,7 +25,7 @@ suspend fun TelegramFlow.getEmojiSuggestionsUrl(languageCode: String?): HttpUrl 
  * @return [Emojis] Represents a list of emoji.
  */
 suspend fun TelegramFlow.getStickerEmojis(sticker: InputFile?): Emojis =
-    sendFunctionAsync(TdApi.GetStickerEmojis(sticker))
+    sendFunctionAsync(GetStickerEmojis(sticker))
 
 /**
  * Suspend function, which searches for emojis by keywords. Supported only if the file database is
@@ -42,4 +41,4 @@ suspend fun TelegramFlow.searchEmojis(
     text: String?,
     exactMatch: Boolean,
     inputLanguageCode: String?
-): Emojis = sendFunctionAsync(TdApi.SearchEmojis(text, exactMatch, inputLanguageCode))
+): Emojis = sendFunctionAsync(SearchEmojis(text, exactMatch, inputLanguageCode))

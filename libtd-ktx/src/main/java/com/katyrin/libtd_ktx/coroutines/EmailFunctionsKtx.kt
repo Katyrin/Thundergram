@@ -1,7 +1,6 @@
 package com.katyrin.libtd_ktx.coroutines
 
 import com.katyrin.libtd_ktx.core.TelegramFlow
-import org.drinkless.td.libcore.telegram.TdApi
 import org.drinkless.td.libcore.telegram.TdApi.*
 
 /**
@@ -10,7 +9,7 @@ import org.drinkless.td.libcore.telegram.TdApi.*
  * @param code Verification code.
  */
 suspend fun TelegramFlow.checkEmailAddressVerificationCode(code: String?): Unit =
-    sendFunctionLaunch(TdApi.CheckEmailAddressVerificationCode(code))
+    sendFunctionLaunch(CheckEmailAddressVerificationCode(code))
 
 /**
  * Suspend function, which checks the 2-step verification recovery email address verification code.
@@ -20,7 +19,7 @@ suspend fun TelegramFlow.checkEmailAddressVerificationCode(code: String?): Unit 
  * @return [PasswordState] Represents the current state of 2-step verification.
  */
 suspend fun TelegramFlow.checkRecoveryEmailAddressCode(code: String?): PasswordState =
-    sendFunctionAsync(TdApi.CheckRecoveryEmailAddressCode(code))
+    sendFunctionAsync(CheckRecoveryEmailAddressCode(code))
 
 /**
  * Suspend function, which returns a 2-step verification recovery email address that was previously
@@ -31,7 +30,7 @@ suspend fun TelegramFlow.checkRecoveryEmailAddressCode(code: String?): PasswordS
  * @return [RecoveryEmailAddress] Contains information about the current recovery email address.
  */
 suspend fun TelegramFlow.getRecoveryEmailAddress(password: String?): RecoveryEmailAddress =
-    sendFunctionAsync(TdApi.GetRecoveryEmailAddress(password))
+    sendFunctionAsync(GetRecoveryEmailAddress(password))
 
 /**
  * Suspend function, which re-sends the code to verify an email address to be added to a user's
@@ -41,7 +40,7 @@ suspend fun TelegramFlow.getRecoveryEmailAddress(password: String?): RecoveryEma
  * code that was sent.
  */
 suspend fun TelegramFlow.resendEmailAddressVerificationCode(): EmailAddressAuthenticationCodeInfo =
-    sendFunctionAsync(TdApi.ResendEmailAddressVerificationCode())
+    sendFunctionAsync(ResendEmailAddressVerificationCode())
 
 /**
  * Suspend function, which resends the 2-step verification recovery email address verification code.
@@ -49,7 +48,7 @@ suspend fun TelegramFlow.resendEmailAddressVerificationCode(): EmailAddressAuthe
  * @return [PasswordState] Represents the current state of 2-step verification.
  */
 suspend fun TelegramFlow.resendRecoveryEmailAddressCode(): PasswordState =
-    sendFunctionAsync(TdApi.ResendRecoveryEmailAddressCode())
+    sendFunctionAsync(ResendRecoveryEmailAddressCode())
 
 /**
  * Suspend function, which sends a code to verify an email address to be added to a user's Telegram
@@ -63,7 +62,7 @@ suspend fun TelegramFlow.resendRecoveryEmailAddressCode(): PasswordState =
 suspend fun TelegramFlow.sendEmailAddressVerificationCode(
     emailAddress: String?
 ): EmailAddressAuthenticationCodeInfo =
-    sendFunctionAsync(TdApi.SendEmailAddressVerificationCode(emailAddress))
+    sendFunctionAsync(SendEmailAddressVerificationCode(emailAddress))
 
 /**
  * Suspend function, which changes the 2-step verification recovery email address of the user. If a
@@ -80,5 +79,4 @@ suspend fun TelegramFlow.sendEmailAddressVerificationCode(
 suspend fun TelegramFlow.setRecoveryEmailAddress(
     password: String?,
     newRecoveryEmailAddress: String?
-): PasswordState =
-    sendFunctionAsync(TdApi.SetRecoveryEmailAddress(password, newRecoveryEmailAddress))
+): PasswordState = sendFunctionAsync(SetRecoveryEmailAddress(password, newRecoveryEmailAddress))

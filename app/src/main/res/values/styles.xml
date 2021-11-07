@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="GroupButtonStyle">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">@dimen/padding_group_button</item>
+        <item name="android:paddingRight">@dimen/padding_group_button</item>
+        <item name="android:minWidth">@dimen/size_app_bar_icon_image</item>
+        <item name="android:minHeight">@dimen/size_app_bar_icon_image</item>
+        <item name="iconTint">@color/white</item>
+        <item name="backgroundTint">@color/background_app_bar_button</item>
+        <item name="cornerRadius">@dimen/corner_radius_app_bar_button</item>
+    </style>
+
+</resources>

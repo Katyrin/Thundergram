@@ -9,7 +9,9 @@ import com.katyrin.thundergram.databinding.ItemChatListBinding
 import com.katyrin.thundergram.model.entities.ChatListItem
 import com.katyrin.thundergram.utils.setChatIconFromUri
 
-class ChatListAdapter : ListAdapter<ChatListItem, ChatListAdapter.ChatListHolder>(DiffCallback()) {
+class ChatListAdapter(
+    private val onClick: (Long, String) -> Unit
+) : ListAdapter<ChatListItem, ChatListAdapter.ChatListHolder>(DiffCallback()) {
 
     private class DiffCallback : DiffUtil.ItemCallback<ChatListItem>() {
         override fun areItemsTheSame(oldItem: ChatListItem, newItem: ChatListItem): Boolean =
@@ -19,13 +21,14 @@ class ChatListAdapter : ListAdapter<ChatListItem, ChatListAdapter.ChatListHolder
             oldItem == newItem
     }
 
-    class ChatListHolder(
+    inner class ChatListHolder(
         private val itemBinding: ItemChatListBinding
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(chatListItem: ChatListItem) {
             itemBinding.apply {
                 chatName.text = chatListItem.chatName
                 chatImage.setChatIconFromUri(chatListItem.chatImage)
+                root.setOnClickListener { onClick(chatListItem.chatId, chatListItem.chatName) }
             }
         }
     }

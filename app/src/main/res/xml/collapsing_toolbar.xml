@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        android:id="@+id/app_bar_transition"
+        app:constraintSetEnd="@id/collapsed"
+        app:constraintSetStart="@id/expanded">
+
+        <OnClick
+            app:clickAction="transitionToStart"
+            app:targetId="@id/app_bar_layout" />
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:moveWhenScrollAtTop="false"
+            app:touchAnchorId="@id/main_container"
+            app:touchAnchorSide="top" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+        <Constraint
+            android:id="@id/money_image"
+            android:layout_width="@dimen/size_app_bar_icon_image"
+            android:layout_height="@dimen/size_app_bar_icon_image"
+            android:layout_marginStart="@dimen/margin_edge"
+            android:contentDescription="@string/money"
+            android:src="@drawable/ic_coin"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/payment_group"
+            app:layout_constraintStart_toStartOf="@id/app_bar_layout"
+            app:layout_constraintTop_toTopOf="@id/payment_group" />
+        <Constraint
+            android:id="@id/count_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_edge"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_money"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/money_image"
+            app:layout_constraintEnd_toStartOf="@+id/payment_group"
+            app:layout_constraintStart_toEndOf="@+id/money_image" />
+        <Constraint
+            android:id="@id/payment_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_edge"
+            android:paddingTop="@dimen/margin_image_normal"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/app_bar_layout"
+            app:layout_constraintTop_toTopOf="@id/app_bar_layout" />
+        <Constraint
+            android:id="@id/chat_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/margin_edge"
+            android:paddingVertical="@dimen/margin_image_normal"
+            app:layout_constraintStart_toStartOf="@id/app_bar_layout"
+            app:layout_constraintTop_toBottomOf="@id/payment_group">
+            <CustomAttribute
+                app:attributeName="textSize"
+                app:customFloatValue="32" />
+        </Constraint>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/collapsed">
+        <Constraint
+            android:id="@id/money_image"
+            android:layout_width="@dimen/size_app_bar_icon_image"
+            android:layout_height="@dimen/size_app_bar_icon_image"
+            android:layout_marginStart="@dimen/margin_edge"
+            android:contentDescription="@string/money"
+            android:src="@drawable/ic_coin"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/payment_group"
+            app:layout_constraintStart_toStartOf="@id/app_bar_layout"
+            app:layout_constraintTop_toTopOf="@id/payment_group" />
+        <Constraint
+            android:id="@id/count_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_edge"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_money"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/money_image"
+            app:layout_constraintEnd_toStartOf="@+id/payment_group"
+            app:layout_constraintStart_toEndOf="@+id/money_image" />
+        <Constraint
+            android:id="@id/payment_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_edge"
+            android:paddingTop="@dimen/margin_image_normal"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/app_bar_layout"
+            app:layout_constraintTop_toTopOf="@id/app_bar_layout" />
+        <Constraint
+            android:id="@id/chat_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/margin_edge"
+            android:paddingVertical="@dimen/margin_image_normal"
+            app:layout_constraintEnd_toEndOf="@id/app_bar_layout"
+            app:layout_constraintStart_toStartOf="@id/app_bar_layout"
+            app:layout_constraintTop_toBottomOf="@id/payment_group">
+            <CustomAttribute
+                app:attributeName="textSize"
+                app:customFloatValue="24" />
+        </Constraint>
+    </ConstraintSet>
+
+</MotionScene>

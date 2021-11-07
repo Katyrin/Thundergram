@@ -1,5 +1,7 @@
-package com.katyrin.thundergram
+package com.katyrin.thundergram.simple_unit_tests
 
+import NORMAL_CODE
+import NORMAL_NUMBER
 import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
 import org.junit.Assert.assertFalse
@@ -20,7 +22,7 @@ class ValidatorsUnitTest {
 
     @Test
     fun phoneNumberValidator_CorrectPhoneNumber_ReturnTrue() {
-        assertTrue(PhoneNumberValidator.isValidPhoneNumber("+79997776655"))
+        assertTrue(PhoneNumberValidator.isValidPhoneNumber(NORMAL_NUMBER))
     }
 
     @Test
@@ -41,7 +43,7 @@ class ValidatorsUnitTest {
 
     @Test
     fun loginCodeValidator_CorrectCode_ReturnTrue() {
-        assertTrue(LoginCodeValidator.isValidCode("76655"))
+        assertTrue(LoginCodeValidator.isValidCode(NORMAL_CODE))
     }
 
     @Test

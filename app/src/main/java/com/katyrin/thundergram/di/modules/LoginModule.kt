@@ -10,8 +10,11 @@ import com.katyrin.thundergram.view.LoginFragment
 import com.katyrin.thundergram.viewmodel.LoginViewModel
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -32,4 +35,10 @@ interface LoginModule {
     @Binds
     @Singleton
     fun bindLoginRepository(loginRepositoryImpl: LoginRepositoryImpl): LoginRepository
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideDispatcher(): CoroutineDispatcher = Dispatchers.Default
+    }
 }

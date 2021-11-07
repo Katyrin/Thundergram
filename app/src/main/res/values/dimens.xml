@@ -6,8 +6,24 @@
     <dimen name="stroke_height">1dp</dimen>
     <dimen name="margin_image_normal">8dp</dimen>
     <dimen name="margin_text_normal">8dp</dimen>
-    <dimen name="size_chat_image">60dp</dimen>
+    <dimen name="size_chat_image">50dp</dimen>
 
     <dimen name="text_size_chat_name_normal">24sp</dimen>
+
+    // inner chat
+    <dimen name="margin_start_icon">4dp</dimen>
+    <dimen name="padding_message_item">8dp</dimen>
+    <dimen name="corner_radius_message">16dp</dimen>
+    <dimen name="margin_bottom_half_image">25dp</dimen>
+    <dimen name="photo_height_size">250dp</dimen>
+
+    <dimen name="text_size_speed">24sp</dimen>
+
+    // app bar
+    <dimen name="corner_radius_app_bar_button">8dp</dimen>
+    <dimen name="padding_group_button">12dp</dimen>
+    <dimen name="size_app_bar_icon_image">40dp</dimen>
+
+    <dimen name="text_size_money">32sp</dimen>
 
 </resources>

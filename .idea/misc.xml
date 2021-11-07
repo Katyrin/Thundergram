@@ -3,10 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
+        <entry key="app/src/main/res/drawable/background_message.xml" value="0.24074074074074073" />
+        <entry key="app/src/main/res/drawable/background_my_message.xml" value="0.23148148148148148" />
+        <entry key="app/src/main/res/drawable/ic_add_coin.xml" value="0.24256410256410257" />
+        <entry key="app/src/main/res/drawable/ic_listener_off.xml" value="0.24256410256410257" />
+        <entry key="app/src/main/res/drawable/ic_send.xml" value="0.24074074074074073" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/custom_exo_player.xml" value="0.1213768115942029" />
+        <entry key="app/src/main/res/layout/dialog_frafment_user_menu.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_chat_list.xml" value="0.15715579710144928" />
-        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.125" />
         <entry key="app/src/main/res/layout/item_chat_list.xml" value="0.14583333333333334" />
+        <entry key="app/src/main/res/layout/item_my_photo_message.xml" value="0.12182971014492754" />
+        <entry key="app/src/main/res/layout/item_my_simple_message.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_my_text_message.xml" value="0.1213768115942029" />
+        <entry key="app/src/main/res/layout/item_my_voice_message.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_simple_message.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_user_photo_message.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/item_user_text_message.xml" value="0.1213768115942029" />
+        <entry key="app/src/main/res/layout/item_user_voice_message.xml" value="0.1213768115942029" />
+        <entry key="app/src/main/res/xml/chat_toolbar_animation.xml" value="0.13768115942028986" />
+        <entry key="app/src/main/res/xml/collapsing_toolbar.xml" value="0.1140625" />
       </map>
     </option>
   </component>

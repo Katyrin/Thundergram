@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.katyrin.thundergram">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -11,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Thundergram">
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,7 +1,6 @@
 package com.katyrin.libtd_ktx.coroutines
 
 import com.katyrin.libtd_ktx.core.TelegramFlow
-import org.drinkless.td.libcore.telegram.TdApi
 import org.drinkless.td.libcore.telegram.TdApi.*
 
 /**
