@@ -10,6 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.katyrin.thundergram.BuildConfig
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.checkCallPermission
@@ -28,15 +32,77 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
     private var navController: NavController? = null
     private var navGraph: NavGraph? = null
     private var binding: ActivityMainBinding? = null
+    private var mRewardedAd: RewardedAd? = null
+
+    private val rewardedAdLoadCallback = object : RewardedAdLoadCallback() {
+        override fun onAdFailedToLoad(adError: LoadAdError) {
+            binding?.adsButton?.isEnabled = false
+            mRewardedAd = null
+        }
+
+        override fun onAdLoaded(rewardedAd: RewardedAd) {
+            binding?.adsButton?.isEnabled = true
+            mRewardedAd = rewardedAd
+        }
+    }
+
+    private val fullScreenContentCallback = object : FullScreenContentCallback() {
+        override fun onAdShowedFullScreenContent() {
+            loadRewardedAd()
+        }
+
+        override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+            loadRewardedAd()
+        }
+
+        override fun onAdDismissedFullScreenContent() {
+            mRewardedAd = null
+            loadRewardedAd()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         setNavigation()
-        binding?.chatNameTextView?.text = getString(R.string.app_name)
         viewModel.liveData.observe(this, ::renderUserState)
         viewModel.checkLogin()
+        initAds()
+        initViews()
     }
+
+    private fun initViews() {
+        binding?.chatNameTextView?.text = getString(R.string.app_name)
+        binding?.adsButton?.setOnClickListener { showRewardedAd() }
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this) {}
+        RequestConfiguration.Builder().setTestDeviceIds(listOf(MY_ADS_PHONE_ID))
+        loadRewardedAd()
+    }
+
+    private fun loadRewardedAd() {
+        RewardedAd.load(
+            this,
+            BuildConfig.AD_UNIT_ID,
+            AdRequest.Builder().build(),
+            rewardedAdLoadCallback
+        )
+        mRewardedAd?.fullScreenContentCallback = fullScreenContentCallback
+    }
+
+    private fun showRewardedAd() {
+        if (mRewardedAd != null) mRewardedAd?.show(this) { onUserEarnedReward() }
+        else toast(getString(R.string.ads_not_ready))
+    }
+
+    private fun onUserEarnedReward() {
+        viewModel.saveCoins(getCurrentCoins() + ONE_COIN)
+        loadRewardedAd()
+    }
+
+    private fun getCurrentCoins(): Long = binding?.countTextView?.text.toString().toLong()
 
     private fun setNavigation() {
         val navHostFragment =
@@ -68,7 +134,7 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
     }
 
     override fun onPhoneCallNumber(phoneNumber: String, decrementCoin: Int) {
-        val newCoins: Long = binding?.countTextView?.text.toString().toLong() - decrementCoin
+        val newCoins: Long = getCurrentCoins() - decrementCoin
         if (newCoins >= ZERO_COINS) callNumber(phoneNumber, newCoins)
         else toast(getString(R.string.lack_count_message))
     }
@@ -102,11 +168,15 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         navController = null
         navGraph = null
         binding = null
+        mRewardedAd = null
         viewModel.cancelJob()
         super.onDestroy()
     }
 
     private companion object {
         const val ZERO_COINS = 0
+        const val ONE_COIN = 1
+        const val MY_ADS_PHONE_ID = "AB3034792ED476712252E3AE416A3296"
+        const val FAKE_ADS_KEY = "ca-app-pub-3940256099942544/5224354917"
     }
 }

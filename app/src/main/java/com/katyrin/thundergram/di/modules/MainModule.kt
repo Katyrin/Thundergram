@@ -21,6 +21,9 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Singleton
+import android.os.Build
+import com.katyrin.thundergram.BuildConfig
+
 
 @Module
 interface MainModule {
@@ -52,17 +55,31 @@ interface MainModule {
         fun provideTdlibParameters(context: Context): TdApi.TdlibParameters =
             TdApi.TdlibParameters().apply {
                 databaseDirectory = "/data/user/0/com.katyrin.thundergram.real/files/td"
-                useMessageDatabase = false
+                useMessageDatabase = true
                 useSecretChats = false
-                apiId = 7305022
-                apiHash = "d40e10a9ae398f329eaf883961111d74"
+                apiId = BuildConfig.APP_ID
+                apiHash = BuildConfig.APP_HASH
                 useFileDatabase = true
                 systemLanguageCode = context.getString(R.string.system_language)
-                deviceModel = "Android"
+                deviceModel = getDeviceName()
                 systemVersion = "Thundergram"
                 applicationVersion = "1.0"
                 enableStorageOptimizer = true
             }
+
+        private fun getDeviceName(): String {
+            val manufacturer = Build.MANUFACTURER
+            val model = Build.MODEL
+            return if (model.lowercase().startsWith(manufacturer.lowercase())) capitalize(model)
+            else capitalize(manufacturer) + " " + capitalize(model)
+        }
+
+
+        private fun capitalize(s: String?): String = when {
+            s == null || s.isEmpty() -> ""
+            Character.isUpperCase(s[0]) -> s
+            else -> Character.toUpperCase(s[0]).toString() + s.substring(1)
+        }
 
         @Provides
         @Singleton

@@ -23,4 +23,5 @@
     <string name="don_t_catch_phone_number">Don\'t catch phone number</string>
     <string name="money">Money</string>
     <string name="lack_count_message">You don\'t have enough points. Top up your counter</string>
+    <string name="ads_not_ready">The rewarded ad wasn\'t ready yet</string>
 </resources>

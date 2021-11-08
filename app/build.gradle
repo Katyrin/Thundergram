@@ -20,6 +20,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+        def appId = properties.getProperty("app_id", "")
+        it.buildConfigField "int", "APP_ID", appId
+        def appHash = properties.getProperty("app_hash", "")
+        it.buildConfigField "String", "APP_HASH", appHash
+        def adUnitId = properties.getProperty("ad_unit_id", "")
+        it.buildConfigField "String", "AD_UNIT_ID", adUnitId
+    }
+
     sourceSets {
         androidTest {
             java.srcDirs += "src/sharedTestData/java"
@@ -99,6 +110,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.0.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.2'
+
+    //Billing ADS
+    implementation 'com.google.android.gms:play-services-ads:20.4.0'
 
     //Test
     testImplementation 'junit:junit:4.13.2'
