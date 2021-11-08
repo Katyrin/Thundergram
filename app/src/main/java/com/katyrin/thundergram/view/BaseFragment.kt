@@ -46,9 +46,9 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment(), HasAndroidInjec
         container: ViewGroup?
     ): Binding
 
-    override fun onDestroyView() {
+    override fun onDetach() {
         binding = null
         navController = null
-        super.onDestroyView()
+        super.onDetach()
     }
 }

@@ -1,10 +1,14 @@
 package com.katyrin.thundergram.model.repository
 
+import com.google.firebase.database.DatabaseReference
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.libtd_ktx.flows.newMessageFlow
+import com.katyrin.thundergram.model.entities.FirebaseEventResponse
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.utils.UNSUBSCRIBE_ID
 import com.katyrin.thundergram.utils.regexPhoneNumber
+import com.katyrin.thundergram.utils.singleValueEvent
+import com.katyrin.thundergram.utils.valueEventFlow
 import com.katyrin.thundergram.viewmodel.appstates.UserState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,12 +22,25 @@ import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
     private val storage: Storage,
+    private val usersReference: DatabaseReference,
     override val api: TelegramFlow
 ) : MainRepository {
 
     override suspend fun getUserState(): UserState = withContext(Dispatchers.IO) {
-        if (storage.getLogged()) UserState.LoggedState else UserState.NotLoggedState
+        if (storage.getMyUserId() != ZERO_ID) UserState.LoggedState else UserState.NotLoggedState
     }
+
+    private fun getUserReference(): DatabaseReference =
+        usersReference.child("${storage.getMyUserId()}")
+
+    override suspend fun getSingleFirebaseEventResponse(): FirebaseEventResponse =
+        withContext(Dispatchers.IO) { getUserReference().singleValueEvent() }
+
+    override suspend fun setCoins(coins: Long): Unit =
+        withContext(Dispatchers.IO) { getUserReference().setValue(coins) }
+
+    override suspend fun getUpdateCoinsFlow(): Flow<FirebaseEventResponse> =
+        withContext(Dispatchers.IO) { getUserReference().valueEventFlow() }
 
     override fun getSubscribedPhone(): Flow<String> =
         api.newMessageFlow()
@@ -56,5 +73,6 @@ class MainRepositoryImpl @Inject constructor(
 
     private companion object {
         const val URI_PHONE_PREFIX = "tel:"
+        const val ZERO_ID = 0L
     }
 }

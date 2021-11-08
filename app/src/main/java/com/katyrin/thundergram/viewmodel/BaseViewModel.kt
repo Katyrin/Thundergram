@@ -13,7 +13,7 @@ abstract class BaseViewModel : ViewModel() {
 
     protected abstract fun handleError(error: Throwable)
 
-    protected fun cancelJob() {
+    fun cancelJob() {
         viewModelCoroutineScope.coroutineContext.cancelChildren()
     }
 

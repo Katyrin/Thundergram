@@ -88,7 +88,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
     }
 
     private fun onPhoneNumberClick(phoneNumber: String) {
-        callListener?.onPhoneCallNumber(phoneNumber)
+        callListener?.onPhoneCallNumber(phoneNumber, ONE_COIN)
     }
 
     private fun sendMessage() {
@@ -129,5 +129,6 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
 
     private companion object {
         const val FIRST_POSITION = 0
+        const val ONE_COIN = 1
     }
 }

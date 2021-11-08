@@ -38,12 +38,11 @@ class LoginRepositoryImpl @Inject constructor(
             .map(loginMapping::mapAuthorizationStateToLoginState)
             .flowOn(dispatcher)
 
-    override fun setLogged(isLogged: Boolean): Unit = storage.setLogged(isLogged)
-
     private suspend fun checkRequiredParams(state: TdApi.AuthorizationState?) {
         when (state) {
             is TdApi.AuthorizationStateWaitTdlibParameters -> api.setTdlibParameters(parameters)
             is TdApi.AuthorizationStateWaitEncryptionKey -> api.checkDatabaseEncryptionKey()
+            is TdApi.AuthorizationStateReady -> storage.setMyUserId(api.getMe().id.toLong())
         }
     }
 }

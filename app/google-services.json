@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "378597072913",
+    "project_id": "thundergram-katyrin91",
+    "storage_bucket": "thundergram-katyrin91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378597072913:android:b789decf873fe9d8ce11b0",
+        "android_client_info": {
+          "package_name": "com.katyrin.thundergram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378597072913-44h3opqis2ag366h6dd4e87ogkonobpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAhIxVjgpwnfD2CVkTjHbc3zzOV0j5HGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378597072913-44h3opqis2ag366h6dd4e87ogkonobpo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378597072913:android:7aefe3eea33f64f9ce11b0",
+        "android_client_info": {
+          "package_name": "com.katyrin.thundergram.real"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378597072913-44h3opqis2ag366h6dd4e87ogkonobpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAhIxVjgpwnfD2CVkTjHbc3zzOV0j5HGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378597072913-44h3opqis2ag366h6dd4e87ogkonobpo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 package com.katyrin.thundergram
 
+import com.google.firebase.database.FirebaseDatabase
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.thundergram.di.DaggerAppComponent
 import dagger.android.AndroidInjector
@@ -11,5 +12,6 @@ class App : DaggerApplication() {
             .builder()
             .withContext(applicationContext)
             .withTelegramFlow(TelegramFlow().apply { attachClient() })
+            .withFirebaseDatabase(FirebaseDatabase.getInstance())
             .build()
 }

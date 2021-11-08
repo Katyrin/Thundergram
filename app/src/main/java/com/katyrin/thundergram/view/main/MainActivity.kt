@@ -19,7 +19,7 @@ import com.katyrin.thundergram.viewmodel.appstates.UserState
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListener {
+class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListener, LoginListener {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -31,12 +31,11 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         setNavigation()
         binding?.chatNameTextView?.text = getString(R.string.app_name)
         viewModel.liveData.observe(this, ::renderUserState)
-        viewModel.callSubscribedPhone.observe(this, ::onPhoneCallNumber)
+        viewModel.checkLogin()
     }
 
     private fun setNavigation() {
@@ -48,18 +47,36 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
 
     private fun renderUserState(userState: UserState): Unit? = when (userState) {
         is UserState.Error -> userState.message?.let { toast(it) } ?: Unit
-        is UserState.LoggedState -> openScreen(R.id.chatListFragment)
+        is UserState.LoggedState -> setLoggedState()
         is UserState.NotLoggedState -> openScreen(R.id.loginFragment)
+        is UserState.UpdateCoinState -> updateCoinCount(userState.currentCoin)
+        is UserState.CallState -> onPhoneCallNumber(userState.phoneNumber, userState.decrementCoins)
     }
 
-    private fun openScreen(screen: Int): Unit? =
-        navGraph?.let { navGraph ->
-            navGraph.startDestination = screen
-            navController?.graph = navGraph
-        }
+    private fun setLoggedState() {
+        onLoginState()
+        openScreen(R.id.chatListFragment)
+    }
 
-    override fun onPhoneCallNumber(phoneNumber: String): Unit =
-        checkCallPermission { startActivity(Intent(ACTION_CALL, Uri.parse(phoneNumber))) }
+    private fun openScreen(screen: Int): Unit? = navGraph?.let { navGraph ->
+        navGraph.startDestination = screen
+        navController?.graph = navGraph
+    }
+
+    private fun updateCoinCount(currentCoin: Int) {
+        binding?.countTextView?.text = currentCoin.toString()
+    }
+
+    override fun onPhoneCallNumber(phoneNumber: String, decrementCoin: Int) {
+        val newCoins: Long = binding?.countTextView?.text.toString().toLong() - decrementCoin
+        if (newCoins >= ZERO_COINS) callNumber(phoneNumber, newCoins)
+        else toast(getString(R.string.lack_count_message))
+    }
+
+    private fun callNumber(phoneNumber: String, newCoins: Long): Unit = checkCallPermission {
+        viewModel.saveCoins(newCoins)
+        startActivity(Intent(ACTION_CALL, Uri.parse(phoneNumber)))
+    }
 
     override fun onChangeSceneTransitionSwipe(dragDirection: Int) {
         binding?.motionLayout?.scene?.getTransitionById(R.id.app_bar_transition)?.setOnSwipe(
@@ -75,10 +92,21 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         binding?.chatNameTextView?.text = text
     }
 
+    override fun onLoginState() {
+        viewModel.updateCoins()
+        viewModel.callSubscribedPhone()
+        viewModel.getUpdatesCoins()
+    }
+
     override fun onDestroy() {
         navController = null
         navGraph = null
         binding = null
+        viewModel.cancelJob()
         super.onDestroy()
+    }
+
+    private companion object {
+        const val ZERO_COINS = 0
     }
 }

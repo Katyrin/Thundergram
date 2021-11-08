@@ -37,6 +37,4 @@ class LoginViewModel @Inject constructor(
         cancelJob()
         viewModelCoroutineScope.launch { loginRepository.sendPassword(password) }
     }
-
-    fun setLogged(isLogged: Boolean): Unit = loginRepository.setLogged(isLogged)
 }

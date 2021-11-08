@@ -1,5 +1,6 @@
 package com.katyrin.thundergram.view
 
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ import com.katyrin.thundergram.databinding.FragmentLoginBinding
 import com.katyrin.thundergram.utils.hideKeyboard
 import com.katyrin.thundergram.view.inputvalidators.LoginCodeValidator
 import com.katyrin.thundergram.view.inputvalidators.PhoneNumberValidator
+import com.katyrin.thundergram.view.main.LoginListener
+import com.katyrin.thundergram.view.main.MainActivity
 import com.katyrin.thundergram.viewmodel.LoginViewModel
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
 import javax.inject.Inject
@@ -24,6 +27,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
     private val viewModel: LoginViewModel by viewModels(factoryProducer = { factory })
+    private var loginListener: LoginListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        loginListener = context as MainActivity
+    }
 
     override fun getFragmentBinding(
         inflater: LayoutInflater,
@@ -55,7 +64,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private fun setLoggedInState() {
-        viewModel.setLogged(true)
+        loginListener?.onLoginState()
         openChatListScreen()
     }
 
@@ -134,5 +143,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         val navDirections: NavDirections =
             LoginFragmentDirections.actionLoginFragmentToChatListFragment()
         navController?.navigate(navDirections)
+    }
+
+    override fun onDestroyView() {
+        loginListener = null
+        super.onDestroyView()
     }
 }
