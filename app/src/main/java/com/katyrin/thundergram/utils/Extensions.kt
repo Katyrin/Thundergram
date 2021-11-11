@@ -22,6 +22,9 @@ fun Fragment.toast(message: String): Unit =
 fun Activity.toast(message: String): Unit =
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
+fun Activity.toast(messageId: Int): Unit =
+    Toast.makeText(this, messageId, Toast.LENGTH_LONG).show()
+
 fun ImageView.setChatIconFromUri(uri: String?, placeholder: Int = R.drawable.ic_user_no_photo) {
     Glide.with(context)
         .load(if (uri.isNullOrEmpty()) placeholder else File(uri))

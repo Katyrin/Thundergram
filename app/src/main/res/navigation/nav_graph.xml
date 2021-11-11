@@ -57,4 +57,10 @@
             app:argType="long" />
     </dialog>
 
+    <dialog
+        android:id="@+id/billingDialogFragment"
+        android:name="com.katyrin.thundergram.view.BillingDialogFragment"
+        android:label="fragment_billing_dialog"
+        tools:layout="@layout/fragment_billing_dialog" />
+
 </navigation>

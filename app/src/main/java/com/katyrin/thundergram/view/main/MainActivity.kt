@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.OnSwipe
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.ads.*
@@ -20,10 +21,9 @@ import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.viewmodel.MainViewModel
 import com.katyrin.thundergram.viewmodel.appstates.UserState
-import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListener, LoginListener {
+class MainActivity : BaseBillingActivity(), CallListener, ToolBarMotionListener, LoginListener {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -69,11 +69,20 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         viewModel.checkLogin()
         initAds()
         initViews()
+        initBillingClient { viewModel.saveCoins(getCurrentCoins() + it) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkBillingPurchased { viewModel.saveCoins(getCurrentCoins() + it) }
     }
 
     private fun initViews() {
         binding?.chatNameTextView?.text = getString(R.string.app_name)
         binding?.adsButton?.setOnClickListener { showRewardedAd() }
+        binding?.payButton?.setOnClickListener {
+            navController?.navigate(R.id.billingDialogFragment)
+        }
     }
 
     private fun initAds() {
