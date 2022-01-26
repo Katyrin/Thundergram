@@ -6,6 +6,7 @@ import com.katyrin.libtd_ktx.coroutines.*
 import com.katyrin.libtd_ktx.flows.authorizationStateFlow
 import com.katyrin.libtd_ktx.flows.newMessageFlow
 import com.katyrin.thundergram.model.entities.ChatListItem
+import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class ChatListRepositoryImpl @Inject constructor(
     private val parameters: TdApi.TdlibParameters,
     private val dispatcher: CoroutineDispatcher,
+    private val storage: Storage,
     override val api: TelegramFlow
 ) : ChatListRepository {
 
@@ -29,7 +31,14 @@ class ChatListRepositoryImpl @Inject constructor(
             val chatList: MutableList<ChatListItem> = mutableListOf()
             user.chatIds.forEach {
                 api.getChat(it).let { chat: TdApi.Chat ->
-                    chatList.add(ChatListItem(chat.id, chat.title, getChatPhotoPath(chat)))
+                    chatList.add(
+                        ChatListItem(
+                            chat.id,
+                            chat.title,
+                            getChatPhotoPath(chat),
+                            storage.isVolumeOn(chat.id)
+                        )
+                    )
                 }
             }
             chatList
@@ -60,6 +69,9 @@ class ChatListRepositoryImpl @Inject constructor(
 
     override suspend fun setEncryptionKey(): Unit =
         withContext(Dispatchers.IO) { api.checkDatabaseEncryptionKey() }
+
+    override fun setIsVolumeOn(chatId: Long, isOn: Boolean): Unit =
+        storage.setIsVolumeOn(chatId, isOn)
 
     private companion object {
         const val OFFSET_ORDER = Long.MAX_VALUE

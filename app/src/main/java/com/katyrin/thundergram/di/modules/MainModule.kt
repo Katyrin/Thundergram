@@ -2,9 +2,11 @@ package com.katyrin.thundergram.di.modules
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ExoPlayer
+import com.katyrin.thundergram.BuildConfig
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.di.ViewModelFactory
 import com.katyrin.thundergram.di.ViewModelKey
@@ -21,15 +23,13 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Singleton
-import android.os.Build
-import com.katyrin.thundergram.BuildConfig
 
 
 @Module
 interface MainModule {
 
     @ContributesAndroidInjector
-    fun bindMainActivity(): MainActivity
+    fun contributeMainActivity(): MainActivity
 
     @Binds
     @IntoMap
@@ -83,7 +83,6 @@ interface MainModule {
 
         @Provides
         @Singleton
-        fun providePlayer(context: Context): SimpleExoPlayer =
-            SimpleExoPlayer.Builder(context).build()
+        fun providePlayer(context: Context): ExoPlayer = ExoPlayer.Builder(context).build()
     }
 }

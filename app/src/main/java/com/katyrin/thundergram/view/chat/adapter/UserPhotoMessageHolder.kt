@@ -13,6 +13,7 @@ class UserPhotoMessageHolder(
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
         with(chatMessage as ChatMessage.Photo) {
+            itemBinding.userName.text = chatMessage.userName
             itemBinding.messageTextView.text = message
             setSpannableString(itemBinding.messageTextView)
             itemBinding.userImageView.setChatIconFromUri(userPhotoPath)

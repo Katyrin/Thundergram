@@ -3,7 +3,9 @@ package com.katyrin.thundergram.model.repository
 import com.google.firebase.database.DatabaseReference
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.libtd_ktx.flows.newMessageFlow
+import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.entities.FirebaseEventResponse
+import com.katyrin.thundergram.model.mapping.MessageMapping
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.utils.UNSUBSCRIBE_ID
 import com.katyrin.thundergram.utils.regexPhoneNumber
@@ -21,14 +23,14 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
+    private val messageMapping: MessageMapping,
     private val storage: Storage,
     private val usersReference: DatabaseReference,
     override val api: TelegramFlow
 ) : MainRepository {
 
-    override suspend fun getUserState(): UserState = withContext(Dispatchers.IO) {
+    override fun getUserState(): UserState =
         if (storage.getMyUserId() != ZERO_ID) UserState.LoggedState else UserState.NotLoggedState
-    }
 
     private fun getUserReference(): DatabaseReference =
         usersReference.child("${storage.getMyUserId()}")
@@ -41,6 +43,9 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getUpdateCoinsFlow(): Flow<FirebaseEventResponse> =
         withContext(Dispatchers.IO) { getUserReference().valueEventFlow() }
+
+    override fun getNewMessageFlow(): Flow<ChatMessage> =
+        api.newMessageFlow().map(messageMapping::mapTdApiMessageToChatMessage)
 
     override fun getSubscribedPhone(): Flow<String> =
         api.newMessageFlow()

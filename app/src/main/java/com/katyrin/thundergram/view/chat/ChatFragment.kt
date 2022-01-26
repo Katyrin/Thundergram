@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ExoPlayer
 import com.katyrin.thundergram.databinding.FragmentChatBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.utils.hideKeyboard
@@ -35,7 +35,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
     private val viewModel: ChatViewModel by viewModels(factoryProducer = { factory })
 
     @Inject
-    lateinit var simpleExoPlayer: SimpleExoPlayer
+    lateinit var exoPlayer: ExoPlayer
 
     private var callListener: CallListener? = null
     private var toolBarMotionListener: ToolBarMotionListener? = null
@@ -72,7 +72,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
     private fun initViews() {
         binding?.apply {
             chatRecyclerView.adapter =
-                ChatAdapter(simpleExoPlayer, lifecycleScope, ::onPhoneNumberClick, ::openUserMenu)
+                ChatAdapter(exoPlayer, lifecycleScope, ::onPhoneNumberClick, ::openUserMenu)
             chatTextInputLayout.setEndIconOnClickListener { sendMessage() }
             chatInputEditText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()

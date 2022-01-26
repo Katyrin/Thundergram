@@ -2,17 +2,24 @@ package com.katyrin.thundergram.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.google.firebase.database.DataSnapshot
+import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.entities.FirebaseEventResponse
 import com.katyrin.thundergram.model.repository.MainRepository
 import com.katyrin.thundergram.viewmodel.appstates.UserState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : BaseViewModel() {
+
+    val getNewMessage: LiveData<ChatMessage> =
+        mainRepository.getNewMessageFlow().flowOn(Dispatchers.Main).asLiveData()
 
     private val mutableLiveData: MutableLiveData<UserState> = MutableLiveData()
     val liveData: LiveData<UserState>
@@ -31,10 +38,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun checkLogin() {
-        cancelJob()
-        viewModelCoroutineScope.launch {
-            mutableLiveData.value = mainRepository.getUserState()
-        }
+        mutableLiveData.value = mainRepository.getUserState()
     }
 
     fun saveCoins(coins: Long) {

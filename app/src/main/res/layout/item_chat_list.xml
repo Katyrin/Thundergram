@@ -22,10 +22,20 @@
         android:layout_margin="@dimen/margin_text_normal"
         android:textSize="@dimen/text_size_chat_name_normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/volume_image_view"
         app:layout_constraintStart_toEndOf="@id/chat_image"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Pokemon name" />
+        tools:text="Chat name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/volume_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_image_normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_volume_on" />
 
     <View
         android:layout_width="0dp"

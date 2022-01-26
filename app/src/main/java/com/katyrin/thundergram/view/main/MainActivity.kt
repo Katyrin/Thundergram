@@ -4,70 +4,30 @@ import android.content.Intent
 import android.content.Intent.ACTION_CALL
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.OnSwipe
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.katyrin.thundergram.BuildConfig
+import androidx.work.*
 import com.katyrin.thundergram.R
-import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.checkCallPermission
+import com.katyrin.thundergram.utils.onStartService
 import com.katyrin.thundergram.utils.toast
-import com.katyrin.thundergram.viewmodel.MainViewModel
+import com.katyrin.thundergram.view.notification.worker.NotificationWorker
 import com.katyrin.thundergram.viewmodel.appstates.UserState
-import javax.inject.Inject
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
 
-class MainActivity : BaseBillingActivity(), CallListener, ToolBarMotionListener, LoginListener {
-
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
-    private val viewModel: MainViewModel by viewModels(factoryProducer = { factory })
+class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, LoginListener {
 
     private var navController: NavController? = null
     private var navGraph: NavGraph? = null
-    private var binding: ActivityMainBinding? = null
-    private var mRewardedAd: RewardedAd? = null
-
-    private val rewardedAdLoadCallback = object : RewardedAdLoadCallback() {
-        override fun onAdFailedToLoad(adError: LoadAdError) {
-            binding?.adsButton?.isEnabled = false
-            mRewardedAd = null
-        }
-
-        override fun onAdLoaded(rewardedAd: RewardedAd) {
-            binding?.adsButton?.isEnabled = true
-            mRewardedAd = rewardedAd
-        }
-    }
-
-    private val fullScreenContentCallback = object : FullScreenContentCallback() {
-        override fun onAdShowedFullScreenContent() {
-            loadRewardedAd()
-        }
-
-        override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-            loadRewardedAd()
-        }
-
-        override fun onAdDismissedFullScreenContent() {
-            mRewardedAd = null
-            loadRewardedAd()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         setNavigation()
         viewModel.liveData.observe(this, ::renderUserState)
         viewModel.checkLogin()
-        initAds()
         initViews()
         initBillingClient { viewModel.saveCoins(getCurrentCoins() + it) }
     }
@@ -79,39 +39,8 @@ class MainActivity : BaseBillingActivity(), CallListener, ToolBarMotionListener,
 
     private fun initViews() {
         binding?.chatNameTextView?.text = getString(R.string.app_name)
-        binding?.adsButton?.setOnClickListener { showRewardedAd() }
-        binding?.payButton?.setOnClickListener {
-            navController?.navigate(R.id.billingDialogFragment)
-        }
+        binding?.payButton?.setOnClickListener { navController?.navigate(R.id.billingDialogFragment) }
     }
-
-    private fun initAds() {
-        MobileAds.initialize(this) {}
-        RequestConfiguration.Builder().setTestDeviceIds(listOf(MY_ADS_PHONE_ID))
-        loadRewardedAd()
-    }
-
-    private fun loadRewardedAd() {
-        RewardedAd.load(
-            this,
-            BuildConfig.AD_UNIT_ID,
-            AdRequest.Builder().build(),
-            rewardedAdLoadCallback
-        )
-        mRewardedAd?.fullScreenContentCallback = fullScreenContentCallback
-    }
-
-    private fun showRewardedAd() {
-        if (mRewardedAd != null) mRewardedAd?.show(this) { onUserEarnedReward() }
-        else toast(getString(R.string.ads_not_ready))
-    }
-
-    private fun onUserEarnedReward() {
-        viewModel.saveCoins(getCurrentCoins() + ONE_COIN)
-        loadRewardedAd()
-    }
-
-    private fun getCurrentCoins(): Long = binding?.countTextView?.text.toString().toLong()
 
     private fun setNavigation() {
         val navHostFragment =
@@ -171,21 +100,54 @@ class MainActivity : BaseBillingActivity(), CallListener, ToolBarMotionListener,
         viewModel.updateCoins()
         viewModel.callSubscribedPhone()
         viewModel.getUpdatesCoins()
+        startNotificationWork()
+        onStartService()
+    }
+
+    private fun startNotificationWork() {
+        if (isWorkScheduled()) WorkManager.getInstance(this).cancelAllWorkByTag(TAG_NOTIFY_WORK)
+        val keep = ExistingPeriodicWorkPolicy.KEEP
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(TAG_NOTIFY_WORK, keep, getPeriodicWorkRequest())
+    }
+
+    private fun getPeriodicWorkRequest(): PeriodicWorkRequest =
+        Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            .let { constraints ->
+                PeriodicWorkRequest.Builder(
+                    NotificationWorker::class.java,
+                    REPEAT_INTERVAL, TimeUnit.MINUTES,
+                    FIX_INTERVAL, TimeUnit.MINUTES
+                )
+                    .addTag(TAG_NOTIFY_WORK)
+                    .setConstraints(constraints)
+                    .build()
+            }
+
+    private fun isWorkScheduled(): Boolean = try {
+        var running = false
+        WorkManager.getInstance(this).getWorkInfosByTag(TAG_NOTIFY_WORK).get().forEach {
+            running = it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
+        }
+        running
+    } catch (e: ExecutionException) {
+        e.printStackTrace()
+        false
+    } catch (e: InterruptedException) {
+        e.printStackTrace()
+        false
     }
 
     override fun onDestroy() {
         navController = null
         navGraph = null
-        binding = null
-        mRewardedAd = null
-        viewModel.cancelJob()
         super.onDestroy()
     }
 
     private companion object {
         const val ZERO_COINS = 0
-        const val ONE_COIN = 1
-        const val MY_ADS_PHONE_ID = "AB3034792ED476712252E3AE416A3296"
-        const val FAKE_ADS_KEY = "ca-app-pub-3940256099942544/5224354917"
+        const val TAG_NOTIFY_WORK = "TAG_NOTIFY_WORK"
+        private const val FIX_INTERVAL = 25L
+        private const val REPEAT_INTERVAL = 30L
     }
 }

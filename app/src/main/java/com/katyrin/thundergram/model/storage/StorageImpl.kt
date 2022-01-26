@@ -12,27 +12,22 @@ class StorageImpl @Inject constructor(context: Context) : Storage {
 
     override fun getSubscribeChatId(): Long = prefs.getLong(SUBSCRIBE_CHAT_ID, DEFAULT_ID)
 
-    override fun setSubscribeChatId(chatId: Long) {
-        prefs.edit()
-            .apply { putLong(SUBSCRIBE_CHAT_ID, chatId) }
-            .apply()
-    }
+    override fun setSubscribeChatId(chatId: Long): Unit =
+        prefs.edit().putLong(SUBSCRIBE_CHAT_ID, chatId).apply()
 
     override fun getSubscribeUserId(): Long = prefs.getLong(SUBSCRIBE_USER_ID, DEFAULT_ID)
 
-    override fun setSubscribeUserId(userId: Long) {
-        prefs.edit()
-            .apply { putLong(SUBSCRIBE_USER_ID, userId) }
-            .apply()
-    }
+    override fun setSubscribeUserId(userId: Long): Unit =
+        prefs.edit().putLong(SUBSCRIBE_USER_ID, userId).apply()
 
     override fun getMyUserId(): Long = prefs.getLong(MY_USER_ID, DEFAULT_ID)
 
-    override fun setMyUserId(userId: Long) {
-        prefs.edit()
-            .apply { putLong(MY_USER_ID, userId) }
-            .apply()
-    }
+    override fun setMyUserId(userId: Long): Unit = prefs.edit().putLong(MY_USER_ID, userId).apply()
+
+    override fun isVolumeOn(chatId: Long): Boolean = prefs.getBoolean(chatId.toString(), false)
+
+    override fun setIsVolumeOn(chatId: Long, isOn: Boolean): Unit =
+        prefs.edit().putBoolean(chatId.toString(), isOn).apply()
 
     private companion object {
         const val SUBSCRIBE_CHAT_ID = "SUBSCRIBE_CHAT_ID"

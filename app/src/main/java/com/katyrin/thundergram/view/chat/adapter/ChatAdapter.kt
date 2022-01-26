@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ExoPlayer
 import com.katyrin.thundergram.databinding.*
 import com.katyrin.thundergram.model.entities.ChatMessage
 import kotlinx.coroutines.CoroutineScope
 
 class ChatAdapter(
-    private val simpleExoPlayer: SimpleExoPlayer,
+    private val exoPlayer: ExoPlayer,
     private val coroutineScope: CoroutineScope,
     private val onPhoneNumberClick: (String) -> Unit,
     private val onSubscribeUser: (Long, Long) -> Unit
@@ -42,14 +42,14 @@ class ChatAdapter(
                 MY_VOICE_MESSAGE ->
                     MyVoiceMessageHolder(
                         coroutineScope,
-                        simpleExoPlayer,
+                        exoPlayer,
                         ItemMyVoiceMessageBinding.inflate(this, parent, false),
                         onSubscribeUser
                     )
                 USER_VOICE_MESSAGE ->
                     UserVoiceMessageHolder(
                         coroutineScope,
-                        simpleExoPlayer,
+                        exoPlayer,
                         ItemUserVoiceMessageBinding.inflate(this, parent, false),
                         onSubscribeUser
                     )

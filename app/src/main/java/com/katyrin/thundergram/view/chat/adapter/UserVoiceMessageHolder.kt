@@ -1,8 +1,8 @@
 package com.katyrin.thundergram.view.chat.adapter
 
 import android.net.Uri
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.ItemUserVoiceMessageBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
@@ -14,13 +14,14 @@ import kotlinx.coroutines.launch
 
 class UserVoiceMessageHolder(
     private val coroutineScope: CoroutineScope,
-    private val simpleExoPlayer: SimpleExoPlayer,
+    private val exoPlayer: ExoPlayer,
     private val itemBinding: ItemUserVoiceMessageBinding,
     private val onSubscribeUser: (chatId: Long, userId: Long) -> Unit
-) : BaseVoiceViewHolder(simpleExoPlayer, itemBinding.root) {
+) : BaseVoiceViewHolder(exoPlayer, itemBinding.root) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
         with(chatMessage as ChatMessage.Voice) {
+            itemBinding.userName.text = chatMessage.userName
             val mediaItem = MediaItem.fromUri(Uri.parse(voiceFilePath))
             itemBinding.soundSeekBar.progress = ZERO_PROGRESS
             itemBinding.speedTextView.text =
@@ -30,7 +31,7 @@ class UserVoiceMessageHolder(
                 clickPlay(position, mediaItem, itemBinding.speedTextView)
             }
             itemBinding.speedTextView.setOnClickListener {
-                setRate(itemBinding.speedTextView, simpleExoPlayer::setPlaybackSpeed)
+                setRate(itemBinding.speedTextView, exoPlayer::setPlaybackSpeed)
             }
             onSeekBarChange(itemBinding.soundSeekBar) {
                 onStartVoice(position, mediaItem, itemBinding.speedTextView)
@@ -42,7 +43,7 @@ class UserVoiceMessageHolder(
         coroutineScope.coroutineContext.cancelChildren()
         coroutineScope.launch {
             audioProgress().collect { progress ->
-                currentVoiceDuration = simpleExoPlayer.duration
+                currentVoiceDuration = exoPlayer.duration
                 itemBinding.soundSeekBar.progress =
                     if (position == currentPosition) progress else START_SEEK_BAR_POSITION
             }

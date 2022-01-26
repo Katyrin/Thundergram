@@ -29,9 +29,10 @@ class ChatViewModel @Inject constructor(
         cancelJob()
         viewModelCoroutineScope.launch {
             var messages: List<ChatMessage> = listOf()
-            while (messages.size != MAX_MESSAGE_SIZE) {
-                messages = chatRepository.getHistoryMessages(chatId)
-                mutableLiveData.value = ChatState.Success(chatRepository.getHistoryMessages(chatId))
+            while (messages.size <= MAX_MESSAGE_SIZE) {
+                mutableLiveData.value = ChatState.Success(
+                    chatRepository.getHistoryMessages(chatId).also { messages = it }
+                )
                 delay(PAUSE_BETWEEN_REQUEST)
             }
         }
@@ -46,6 +47,6 @@ class ChatViewModel @Inject constructor(
 
     private companion object {
         const val MAX_MESSAGE_SIZE = 100
-        const val PAUSE_BETWEEN_REQUEST = 3000L
+        const val PAUSE_BETWEEN_REQUEST = 100L
     }
 }

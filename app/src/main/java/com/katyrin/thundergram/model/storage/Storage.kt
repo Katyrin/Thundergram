@@ -7,4 +7,6 @@ interface Storage {
     fun setSubscribeUserId(userId: Long)
     fun getMyUserId(): Long
     fun setMyUserId(userId: Long)
+    fun isVolumeOn(chatId: Long): Boolean
+    fun setIsVolumeOn(chatId: Long, isOn: Boolean)
 }

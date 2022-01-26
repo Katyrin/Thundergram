@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="phone_number">Введите номер телефона</string>
+    <string name="enter_code">Введите код</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="login_description_text">Для входа в приложение у вас должен быть аккаунт Telegram. Также у вас должен быть доступ к мессенджеру для получения проверочного кода.</string>
+    <string name="send">Отправить</string>
+    <string name="change_phone_number">Изменить номер телефона</string>
+    <string name="send_sms_code">Отправьте код в виде SMS</string>
+    <string name="helper_text_phone">Проверьте, правильно ли введен номер. Номер должен начинаться со знака \"+\", за которым следует код вашей страны, а затем основной номер. Также убедитесь, что в номере нет лишних символов или пробелов.</string>
+    <string name="helper_text_code">Код должен содержать 5 цифр, без букв, пробелов и лишних символов.</string>
+    <string name="enter_message">Введите сообщение</string>
+    <string name="access_to_call">Запрос разрешения</string>
+    <string name="explanation_get_call">Требуется разрешение на телефонные звонки, чтобы использовать приложение в полном объеме</string>
+    <string name="grant_access">Разрешить доступ</string>
+    <string name="do_not">Не надо</string>
+    <string name="catch_phone_number">Поймать номер телефона</string>
+    <string name="don_t_catch_phone_number">Не ловить номер телефона</string>
+    <string name="money">Деньги</string>
+    <string name="lack_count_message">У вас недостаточно баллов. Пополните свой счетчик</string>
+    <string name="ads_not_ready">Реклама еще не загружена</string>
+    <string name="billing_canceling">Ошибка, вызванная отменой пользователем процесса покупки</string>
+    <string name="any_other_error">Любая другая ошибка</string>
+    <string name="service_connected_message">Выберите, сколько монет вам нужно</string>
+    <string name="photo_message">Фото сообщение</string>
+    <string name="voice_message">Голосовое сообщение</string>
+    <string name="service_title">Не рекомендуется отключать это уведомление</string>
+    <string name="service_message">Этот сервис позволяет вам ловить номера телефонов выбранного вами пользователя и получать новые уведомления.</string>
+</resources>

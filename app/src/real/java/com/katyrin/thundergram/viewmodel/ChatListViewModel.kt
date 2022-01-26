@@ -48,6 +48,9 @@ class ChatListViewModel @Inject constructor(
         }
     }
 
+    fun onVolumeChangeState(chatId: Long, isOn: Boolean): Unit =
+        chatListRepository.setIsVolumeOn(chatId, isOn)
+
     private companion object {
         const val PARAMETERS_MESSAGE_ERROR =
             "Initialization parameters are needed: call setTdlibParameters first"

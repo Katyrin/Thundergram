@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode.OK
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.katyrin.thundergram.databinding.FragmentBillingDialogBinding
 import com.katyrin.thundergram.utils.CALL_100_COIN
 import com.katyrin.thundergram.utils.CALL_500_COIN
@@ -61,34 +63,24 @@ class BillingDialogFragment : BottomSheetDialogFragment() {
 
     private suspend fun initViews(skuDetailsList: List<SkuDetails>): Unit =
         withContext(Dispatchers.Main) {
-            val skuTitleAppNameRegex = """(?> \(.+?\))$""".toRegex()
-            var call50Coin: SkuDetails? = null
-            var call100Coin: SkuDetails? = null
-            var call500Coin: SkuDetails? = null
-            for (skuDetails in skuDetailsList)
-                when (skuDetails.sku) {
-                    CALL_50_COIN -> call50Coin = skuDetails
-                    CALL_100_COIN -> call100Coin = skuDetails
-                    CALL_500_COIN -> call500Coin = skuDetails
-                }
             binding?.apply {
-                call50Coin?.apply {
-                    firstBillingText.text = title.replace(skuTitleAppNameRegex, "")
-                    firstBillingButton.text = price
-                    firstBillingButton.setOnClickListener { setButtonBillingClick(this) }
-                }
-                call100Coin?.apply {
-                    secondBillingText.text = title.replace(skuTitleAppNameRegex, "")
-                    secondBillingButton.text = price
-                    secondBillingButton.setOnClickListener { setButtonBillingClick(this) }
-                }
-                call500Coin?.apply {
-                    thirdBillingText.text = title.replace(skuTitleAppNameRegex, "")
-                    thirdBillingButton.text = price
-                    thirdBillingButton.setOnClickListener { setButtonBillingClick(this) }
+                for (skuDetails in skuDetailsList) when (skuDetails.sku) {
+                    CALL_50_COIN ->
+                        skuDetails.setProductString(firstBillingText, firstBillingButton)
+                    CALL_100_COIN ->
+                        skuDetails.setProductString(secondBillingText, secondBillingButton)
+                    CALL_500_COIN ->
+                        skuDetails.setProductString(thirdBillingText, thirdBillingButton)
                 }
             }
         }
+
+    private fun SkuDetails.setProductString(productName: TextView, productButton: MaterialButton) {
+        val skuTitleAppNameRegex = """(?> \(.+?\))$""".toRegex()
+        productName.text = title.replace(skuTitleAppNameRegex, "")
+        productButton.text = price
+        productButton.setOnClickListener { setButtonBillingClick(this) }
+    }
 
     private fun setButtonBillingClick(skuDetails: SkuDetails) {
         val flowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()

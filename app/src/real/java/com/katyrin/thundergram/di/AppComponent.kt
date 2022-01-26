@@ -20,7 +20,8 @@ import javax.inject.Singleton
         ChatListModule::class,
         ChatModule::class,
         UserMenuModule::class,
-        FirebaseModule::class
+        FirebaseModule::class,
+        NotificationModule::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

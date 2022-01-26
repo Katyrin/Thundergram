@@ -2,6 +2,8 @@ package com.katyrin.thundergram.di.modules
 
 import androidx.lifecycle.ViewModel
 import com.katyrin.thundergram.di.ViewModelKey
+import com.katyrin.thundergram.model.mapping.MessageMapping
+import com.katyrin.thundergram.model.mapping.MessageMappingImpl
 import com.katyrin.thundergram.model.repository.ChatRepository
 import com.katyrin.thundergram.model.repository.ChatRepositoryImpl
 import com.katyrin.thundergram.view.chat.ChatFragment
@@ -26,4 +28,7 @@ interface ChatModule {
     @Binds
     @Singleton
     fun bindChatRepository(chatRepositoryImpl: ChatRepositoryImpl): ChatRepository
+
+    @Binds
+    fun bindMessageMapping(messageMappingImpl: MessageMappingImpl): MessageMapping
 }

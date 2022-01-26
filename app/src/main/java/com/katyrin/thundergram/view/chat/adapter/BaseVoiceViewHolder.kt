@@ -3,15 +3,15 @@ package com.katyrin.thundergram.view.chat.adapter
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.katyrin.thundergram.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 abstract class BaseVoiceViewHolder(
-    private val simpleExoPlayer: SimpleExoPlayer,
+    private val exoPlayer: ExoPlayer,
     itemView: View
 ) : BaseViewHolder(itemView) {
 
@@ -52,14 +52,14 @@ abstract class BaseVoiceViewHolder(
             emit(getEmitResult())
             delay(DELAY_BETWEEN_EMITS)
             if (emitsCount != CHECK_PLAYER_COUNT) emitsCount++
-            else isPlaying = simpleExoPlayer.isPlaying
+            else isPlaying = exoPlayer.isPlaying
         }
         setPlayIcon(R.drawable.ic_play)
     }
 
     private fun getEmitResult(): Int =
-        simpleExoPlayer.currentPosition.toFloat()
-            .div(simpleExoPlayer.duration)
+        exoPlayer.currentPosition.toFloat()
+            .div(exoPlayer.duration)
             .times(SEEK_BAR_FULL_SIZE).toInt()
 
     private fun getMsPosition(progress: Int): Long =
@@ -76,12 +76,12 @@ abstract class BaseVoiceViewHolder(
     }
 
     protected fun clickPlay(position: Int, mediaItem: MediaItem, speedTextView: TextView): Unit =
-        if (simpleExoPlayer.isPlaying && position == currentPosition) onStopVoice()
+        if (exoPlayer.isPlaying && position == currentPosition) onStopVoice()
         else onStartVoice(position, mediaItem, speedTextView)
 
     private fun onStopVoice() {
         setPlayIcon(R.drawable.ic_play)
-        simpleExoPlayer.pause()
+        exoPlayer.pause()
     }
 
     protected fun onStartVoice(position: Int, mediaItem: MediaItem, speedTextView: TextView) {
@@ -89,11 +89,11 @@ abstract class BaseVoiceViewHolder(
         if (progress > PROGRESS_RESTART_SIZE) progress = ZERO_PROGRESS
         currentPosition = position
         setPlayIcon(R.drawable.ic_pause)
-        getRate(speedTextView, simpleExoPlayer::setPlaybackSpeed)
-        simpleExoPlayer.setMediaItem(mediaItem)
-        simpleExoPlayer.prepare()
-        simpleExoPlayer.seekTo(getMsPosition(progress))
-        simpleExoPlayer.play()
+        getRate(speedTextView, exoPlayer::setPlaybackSpeed)
+        exoPlayer.setMediaItem(mediaItem)
+        exoPlayer.prepare()
+        exoPlayer.seekTo(getMsPosition(progress))
+        exoPlayer.play()
         subscribeAudioProgress(position)
     }
 

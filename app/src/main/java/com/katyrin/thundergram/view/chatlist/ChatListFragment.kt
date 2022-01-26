@@ -52,7 +52,8 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     }
 
     private fun initViews() {
-        binding?.recyclerChatList?.adapter = ChatListAdapter(::openChat)
+        binding?.recyclerChatList?.adapter =
+            ChatListAdapter(::openChat, viewModel::onVolumeChangeState)
     }
 
     private fun openChat(chatId: Long, chatName: String) {

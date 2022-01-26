@@ -13,4 +13,5 @@ interface ChatListRepository : UserKtx, ChatKtx {
     suspend fun getAuthState(): Flow<TdApi.AuthorizationState>
     suspend fun setParameters()
     suspend fun setEncryptionKey()
+    fun setIsVolumeOn(chatId: Long, isOn: Boolean)
 }

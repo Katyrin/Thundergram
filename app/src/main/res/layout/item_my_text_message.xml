@@ -6,21 +6,44 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_message_item">
 
-    <TextView
-        android:id="@+id/message_text_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_bottom_half_image"
-        android:autoLink="phone"
         android:background="@drawable/background_my_message"
-        android:padding="@dimen/margin_edge"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/user_image_view"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="Here will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be message" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/margin_image_normal"
+            android:paddingTop="@dimen/margin_image_normal"
+            android:paddingEnd="@dimen/margin_image_normal"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="User Name" />
+
+        <TextView
+            android:id="@+id/message_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="phone"
+            android:padding="@dimen/margin_image_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            tools:text="Here will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be messageHere will be message" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/user_image_view"
@@ -30,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/message_text_view"
+        app:layout_constraintStart_toEndOf="@id/content_layout"
         tools:srcCompat="@drawable/ic_user_no_photo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

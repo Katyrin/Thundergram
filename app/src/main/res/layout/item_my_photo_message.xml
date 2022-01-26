@@ -16,6 +16,18 @@
         app:layout_constraintEnd_toStartOf="@id/user_image_view"
         app:layout_constraintStart_toStartOf="parent">
 
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/margin_image_normal"
+            android:paddingTop="@dimen/margin_image_normal"
+            android:paddingEnd="@dimen/margin_image_normal"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="User Name" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/image_card_view"
             android:layout_width="0dp"
@@ -25,7 +37,7 @@
             app:cardCornerRadius="@dimen/corner_radius_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/user_name">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/content_image_view"
