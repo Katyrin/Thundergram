@@ -22,7 +22,7 @@ class ChatViewModel @Inject constructor(
         get() = mutableLiveData
 
     override fun handleError(error: Throwable) {
-        mutableLiveData.value = ChatState.Error(error.message)
+        if (error.message != UNAUTHORIZED) mutableLiveData.value = ChatState.Error(error.message)
     }
 
     fun getMessages(chatId: Long) {
@@ -48,5 +48,6 @@ class ChatViewModel @Inject constructor(
     private companion object {
         const val MAX_MESSAGE_SIZE = 100
         const val PAUSE_BETWEEN_REQUEST = 100L
+        const val UNAUTHORIZED = "Unauthorized"
     }
 }

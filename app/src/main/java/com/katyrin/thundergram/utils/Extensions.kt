@@ -81,3 +81,7 @@ fun Context.onStartService() {
         ContextCompat.startForegroundService(this, intent)
     else startService(intent)
 }
+
+fun Context.onStopService() {
+    stopService(Intent(this, NotificationService::class.java))
+}

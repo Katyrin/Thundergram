@@ -11,3 +11,6 @@ const val COIN_500 = 500
 
 var regexPhoneNumber: String =
     "[+]?(\\d{1,5})[ ]?[-]?\\(?(\\d{3})\\)?[ ]?[-]?(\\d{3})[ ]?[-]?(\\d{2})[ ]?[-]?(\\d{2})"
+
+const val PARAMETERS_MESSAGE_ERROR =
+    "Initialization parameters are needed: call setTdlibParameters first"

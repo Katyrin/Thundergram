@@ -3,7 +3,9 @@ package com.katyrin.thundergram.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import com.katyrin.thundergram.model.generator.ChatListGenerator
 import com.katyrin.thundergram.model.repository.ChatListRepository
+import com.katyrin.thundergram.utils.PARAMETERS_MESSAGE_ERROR
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -13,7 +15,8 @@ import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
 
 class ChatListViewModel @Inject constructor(
-    private val chatListRepository: ChatListRepository
+    private val chatListRepository: ChatListRepository,
+    private val chatListGenerator: ChatListGenerator
 ) : BaseViewModel() {
 
     private var mutableLiveData: MutableLiveData<ChatListState> = MutableLiveData()
@@ -24,8 +27,16 @@ class ChatListViewModel @Inject constructor(
         chatListRepository.updateList().flowOn(Dispatchers.Main).asLiveData()
 
     override fun handleError(error: Throwable) {
-        if (error.message == PARAMETERS_MESSAGE_ERROR) passParameters()
-        else mutableLiveData.value = ChatListState.Error(error.message)
+        when (error.message) {
+            PARAMETERS_MESSAGE_ERROR -> passParameters()
+            UNAUTHORIZED -> mutableLiveData.value =
+                ChatListState.Success(chatListGenerator.generateChatList())
+            else -> setErrorState(error.message)
+        }
+    }
+
+    private fun setErrorState(message: String?) {
+        mutableLiveData.value = ChatListState.Error(message)
     }
 
     private fun passParameters() {
@@ -38,13 +49,14 @@ class ChatListViewModel @Inject constructor(
     private suspend fun checkRequiredParams(state: TdApi.AuthorizationState?): Unit = when (state) {
         is TdApi.AuthorizationStateWaitTdlibParameters -> chatListRepository.setParameters()
         is TdApi.AuthorizationStateWaitEncryptionKey -> chatListRepository.setEncryptionKey()
-        else -> getChats()
+        is TdApi.AuthorizationStateReady -> getChats()
+        else -> setErrorState(SOMETHING_WRONG)
     }
 
     fun getChats() {
         cancelJob()
         viewModelCoroutineScope.launch {
-            mutableLiveData.value = ChatListState.Success(chatListRepository.getChats())
+            mutableLiveData.value = ChatListState.Success(chatListRepository.getChats(), true)
         }
     }
 
@@ -52,7 +64,7 @@ class ChatListViewModel @Inject constructor(
         chatListRepository.setIsVolumeOn(chatId, isOn)
 
     private companion object {
-        const val PARAMETERS_MESSAGE_ERROR =
-            "Initialization parameters are needed: call setTdlibParameters first"
+        const val UNAUTHORIZED = "Unauthorized"
+        const val SOMETHING_WRONG = "Something wrong"
     }
 }

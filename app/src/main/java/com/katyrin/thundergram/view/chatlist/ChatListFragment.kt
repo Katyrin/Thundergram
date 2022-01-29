@@ -12,6 +12,8 @@ import androidx.navigation.NavDirections
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.FragmentChatListBinding
 import com.katyrin.thundergram.model.entities.ChatListItem
+import com.katyrin.thundergram.utils.onStartService
+import com.katyrin.thundergram.utils.onStopService
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.BaseFragment
 import com.katyrin.thundergram.view.main.MainActivity
@@ -39,6 +41,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireContext().onStopService()
         viewModel.liveData.observe(viewLifecycleOwner, ::renderData)
         viewModel.updateList.observe(viewLifecycleOwner, ::renderData)
         viewModel.getChats()
@@ -63,12 +66,13 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     }
 
     private fun renderData(chatListState: ChatListState): Unit? = when (chatListState) {
-        is ChatListState.Success -> updateList(chatListState.chatList)
+        is ChatListState.Success -> updateList(chatListState.chatList, chatListState.isStartService)
         is ChatListState.Error -> chatListState.message?.let { toast(it) }
     }
 
-    private fun updateList(chatList: List<ChatListItem>) {
+    private fun updateList(chatList: List<ChatListItem>, isStartService: Boolean) {
         (binding?.recyclerChatList?.adapter as ChatListAdapter).submitList(chatList)
+        if (isStartService) requireContext().onStartService()
     }
 
     override fun onDetach() {

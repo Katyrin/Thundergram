@@ -7,10 +7,7 @@ import com.katyrin.thundergram.model.mapping.LoginMapping
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
 

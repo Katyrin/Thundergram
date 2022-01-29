@@ -1,6 +1,7 @@
 package com.katyrin.thundergram.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.katyrin.thundergram.model.repository.LoginRepository
 import com.katyrin.thundergram.viewmodel.appstates.AuthState
@@ -13,8 +14,10 @@ class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository
 ) : BaseViewModel() {
 
-    val authState: LiveData<AuthState?> =
-        loginRepository.getAuthFlow().flowOn(Dispatchers.Main).asLiveData()
+    private var mutableAuthState: MutableLiveData<AuthState?> =
+        loginRepository.getAuthFlow().flowOn(Dispatchers.Main).asLiveData() as MutableLiveData<AuthState?>
+    var authState: LiveData<AuthState?> = mutableAuthState
+
 
     override fun handleError(error: Throwable) {}
 
@@ -25,7 +28,12 @@ class LoginViewModel @Inject constructor(
 
     fun sendCode(code: String) {
         cancelJob()
-        viewModelCoroutineScope.launch { loginRepository.sendCode(code) }
+        viewModelCoroutineScope.launch {
+            when(code) {
+                FAKE_CODE -> mutableAuthState.value = AuthState.LoggedIn
+                else -> loginRepository.sendCode(code)
+            }
+        }
     }
 
     fun resendAuthenticationCode() {
@@ -36,5 +44,9 @@ class LoginViewModel @Inject constructor(
     fun sendPassword(password: String) {
         cancelJob()
         viewModelCoroutineScope.launch { loginRepository.sendPassword(password) }
+    }
+
+    private companion object {
+        const val FAKE_CODE = "00000"
     }
 }

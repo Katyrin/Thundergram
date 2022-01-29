@@ -7,11 +7,14 @@ import android.os.Build
 import android.os.IBinder
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.model.entities.ChatMessage
+import com.katyrin.thundergram.model.repository.ChatListRepository
 import com.katyrin.thundergram.model.repository.MainRepository
+import com.katyrin.thundergram.utils.PARAMETERS_MESSAGE_ERROR
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
 
 class NotificationService : Service() {
@@ -20,9 +23,31 @@ class NotificationService : Service() {
     lateinit var mainRepository: MainRepository
 
     @Inject
+    lateinit var chatListRepository: ChatListRepository
+
+    @Inject
     lateinit var notificationGenerator: NotificationGenerator
 
-    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val serviceScope = CoroutineScope(
+        Dispatchers.Main
+                + SupervisorJob()
+                + CoroutineExceptionHandler { _, throwable -> handleError(throwable) }
+    )
+
+    private fun handleError(error: Throwable) {
+        if (error.message == PARAMETERS_MESSAGE_ERROR) passParameters()
+    }
+
+    private fun passParameters() {
+        cancelJob()
+        serviceScope.launch { chatListRepository.getAuthState().collect(::checkRequiredParams) }
+    }
+
+    private suspend fun checkRequiredParams(state: TdApi.AuthorizationState?): Unit = when (state) {
+        is TdApi.AuthorizationStateWaitTdlibParameters -> chatListRepository.setParameters()
+        is TdApi.AuthorizationStateWaitEncryptionKey -> chatListRepository.setEncryptionKey()
+        else -> getNewMessage()
+    }
 
     private fun cancelJob() {
         serviceScope.coroutineContext.cancelChildren()
@@ -34,10 +59,15 @@ class NotificationService : Service() {
         AndroidInjection.inject(this)
         super.onCreate()
         serviceScope.launch {
-            mainRepository.getNewMessageFlow()
-                .flowOn(Dispatchers.Default)
-                .collect(::renderNewMessage)
+            mainRepository.updateUserId()
+            getNewMessage()
         }
+    }
+
+    private suspend fun getNewMessage() {
+        mainRepository.getNewMessageFlow()
+            .flowOn(Dispatchers.Default)
+            .collect(::renderNewMessage)
     }
 
     private fun renderNewMessage(chatMessage: ChatMessage): Unit = when (chatMessage) {

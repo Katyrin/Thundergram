@@ -13,4 +13,5 @@ interface MainRepository : UserKtx {
     suspend fun getSingleFirebaseEventResponse(): FirebaseEventResponse
     suspend fun getUpdateCoinsFlow(): Flow<FirebaseEventResponse>
     fun getNewMessageFlow(): Flow<ChatMessage>
+    suspend fun updateUserId()
 }

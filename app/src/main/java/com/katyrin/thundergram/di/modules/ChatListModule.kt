@@ -2,6 +2,8 @@ package com.katyrin.thundergram.di.modules
 
 import androidx.lifecycle.ViewModel
 import com.katyrin.thundergram.di.ViewModelKey
+import com.katyrin.thundergram.model.generator.ChatListGenerator
+import com.katyrin.thundergram.model.generator.ChatListGeneratorImpl
 import com.katyrin.thundergram.model.repository.ChatListRepository
 import com.katyrin.thundergram.model.repository.ChatListRepositoryImpl
 import com.katyrin.thundergram.view.chatlist.ChatListFragment
@@ -26,4 +28,8 @@ interface ChatListModule {
     @Binds
     @Singleton
     fun bindChatListRepository(chatListRepositoryImpl: ChatListRepositoryImpl): ChatListRepository
+
+    @Binds
+    @Singleton
+    fun bindChatListGenerator(chatListGeneratorImpl: ChatListGeneratorImpl): ChatListGenerator
 }

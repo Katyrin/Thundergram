@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.work.*
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.utils.checkCallPermission
-import com.katyrin.thundergram.utils.onStartService
+import com.katyrin.thundergram.utils.onStopService
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.notification.worker.NotificationWorker
 import com.katyrin.thundergram.viewmodel.appstates.UserState
@@ -25,6 +25,7 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onStopService()
         setNavigation()
         viewModel.liveData.observe(this, ::renderUserState)
         viewModel.checkLogin()
@@ -101,7 +102,6 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
         viewModel.callSubscribedPhone()
         viewModel.getUpdatesCoins()
         startNotificationWork()
-        onStartService()
     }
 
     private fun startNotificationWork() {

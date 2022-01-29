@@ -2,6 +2,7 @@ package com.katyrin.thundergram.model.repository
 
 import com.google.firebase.database.DatabaseReference
 import com.katyrin.libtd_ktx.core.TelegramFlow
+import com.katyrin.libtd_ktx.coroutines.getMe
 import com.katyrin.libtd_ktx.flows.newMessageFlow
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.entities.FirebaseEventResponse
@@ -75,6 +76,8 @@ class MainRepositoryImpl @Inject constructor(
         storage.setSubscribeChatId(UNSUBSCRIBE_ID)
         storage.setSubscribeUserId(UNSUBSCRIBE_ID)
     }
+
+    override suspend fun updateUserId(): Unit = storage.setMyUserId(api.getMe().id.toLong())
 
     private companion object {
         const val URI_PHONE_PREFIX = "tel:"
