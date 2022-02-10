@@ -88,6 +88,7 @@ class NotificationGeneratorImpl @Inject constructor(
         priority = NotificationCompat.PRIORITY_MAX
         setSound(Uri.parse(getSoundString()))
         setContentIntent(getPendingIntent(bundle))
+        setAutoCancel(true)
     }
 
     private fun getSoundString(): String =

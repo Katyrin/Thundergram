@@ -13,6 +13,7 @@ import com.katyrin.thundergram.utils.PARAMETERS_MESSAGE_ERROR
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
@@ -58,20 +59,31 @@ class NotificationService : Service() {
     override fun onCreate() {
         AndroidInjection.inject(this)
         super.onCreate()
-        serviceScope.launch {
-            mainRepository.updateUserId()
-            getNewMessage()
-        }
     }
 
     private suspend fun getNewMessage() {
         mainRepository.getNewMessageFlow()
             .flowOn(Dispatchers.Default)
+            .filter(::filterDoubleMessage)
             .collect(::renderNewMessage)
     }
 
+    private fun filterDoubleMessage(chatMessage: ChatMessage): Boolean = when (chatMessage) {
+        is ChatMessage.Text -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
+        is ChatMessage.Photo -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
+        is ChatMessage.Voice -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
+    }
+
     private fun renderNewMessage(chatMessage: ChatMessage): Unit = when (chatMessage) {
-        is ChatMessage.Text -> notificationGenerator.showMessageNotification(
+        is ChatMessage.Text -> renderTextMessage(chatMessage)
+        is ChatMessage.Photo -> renderPhotoMessage(chatMessage)
+        is ChatMessage.Voice -> renderVoiceMessage(chatMessage)
+    }
+
+    private fun renderTextMessage(chatMessage: ChatMessage.Text) {
+        chatId = chatMessage.chatId
+        messageId = chatMessage.messageId
+        notificationGenerator.showMessageNotification(
             chatMessage.userId,
             chatMessage.chatId,
             chatMessage.chatName,
@@ -79,7 +91,12 @@ class NotificationService : Service() {
             chatMessage.message,
             chatMessage.userPhotoPath
         )
-        is ChatMessage.Photo -> notificationGenerator.showMessageNotification(
+    }
+
+    private fun renderPhotoMessage(chatMessage: ChatMessage.Photo) {
+        chatId = chatMessage.chatId
+        messageId = chatMessage.messageId
+        notificationGenerator.showMessageNotification(
             chatMessage.userId,
             chatMessage.chatId,
             chatMessage.chatName,
@@ -87,7 +104,12 @@ class NotificationService : Service() {
             getString(R.string.photo_message),
             chatMessage.userPhotoPath
         )
-        is ChatMessage.Voice -> notificationGenerator.showMessageNotification(
+    }
+
+    private fun renderVoiceMessage(chatMessage: ChatMessage.Voice) {
+        chatId = chatMessage.chatId
+        messageId = chatMessage.messageId
+        notificationGenerator.showMessageNotification(
             chatMessage.userId,
             chatMessage.chatId,
             chatMessage.chatName,
@@ -104,6 +126,10 @@ class NotificationService : Service() {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
         )
         else startForeground(NOTIFICATION_ID, notificationGenerator.getForegroundNotification())
+        serviceScope.launch {
+            mainRepository.updateUserId()
+            getNewMessage()
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -114,5 +140,7 @@ class NotificationService : Service() {
 
     private companion object {
         const val NOTIFICATION_ID = 154
+        var messageId: Long = 0
+        var chatId: Long = 0
     }
 }

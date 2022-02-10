@@ -19,6 +19,7 @@ class MessageMappingImpl @Inject constructor(
             is TdApi.MessageText -> ChatMessage.Text(
                 message.chatId,
                 message.senderUserId.toLong(),
+                message.id,
                 api.getChat(message.chatId).title,
                 api.getUser(message.senderUserId).firstName + " " + api.getUser(message.senderUserId).lastName,
                 content.text.text,
@@ -28,6 +29,7 @@ class MessageMappingImpl @Inject constructor(
             is TdApi.MessageVoiceNote -> ChatMessage.Voice(
                 message.chatId,
                 message.senderUserId.toLong(),
+                message.id,
                 api.getChat(message.chatId).title,
                 api.getUser(message.senderUserId).firstName + " " + api.getUser(message.senderUserId).lastName,
                 getVoiceMessagePath(content.voiceNote.voice),
@@ -37,6 +39,7 @@ class MessageMappingImpl @Inject constructor(
             is TdApi.MessagePhoto -> ChatMessage.Photo(
                 message.chatId,
                 message.senderUserId.toLong(),
+                message.id,
                 api.getChat(message.chatId).title,
                 api.getUser(message.senderUserId).firstName + " " + api.getUser(message.senderUserId).lastName,
                 content.caption.text,
@@ -47,6 +50,7 @@ class MessageMappingImpl @Inject constructor(
             else -> ChatMessage.Text(
                 message.chatId,
                 message.senderUserId.toLong(),
+                message.id,
                 api.getChat(message.chatId).title,
                 api.getUser(message.senderUserId).firstName + " " + api.getUser(message.senderUserId).lastName,
                 "",

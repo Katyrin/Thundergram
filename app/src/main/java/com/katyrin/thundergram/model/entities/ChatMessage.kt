@@ -4,6 +4,7 @@ sealed class ChatMessage {
     data class Text(
         val chatId: Long = 0,
         val userId: Long = 0,
+        val messageId: Long = 0,
         val chatName: String = "",
         val userName: String = "",
         val message: String = "",
@@ -14,6 +15,7 @@ sealed class ChatMessage {
     data class Voice(
         val chatId: Long = 0,
         val userId: Long = 0,
+        val messageId: Long = 0,
         val chatName: String = "",
         val userName: String = "",
         val voiceFilePath: String = "",
@@ -24,6 +26,7 @@ sealed class ChatMessage {
     data class Photo(
         val chatId: Long = 0,
         val userId: Long = 0,
+        val messageId: Long = 0,
         val chatName: String = "",
         val userName: String = "",
         val message: String = "",
