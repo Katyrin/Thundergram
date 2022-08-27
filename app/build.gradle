@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.katyrin.thundergram"
         minSdk 21
-        targetSdk 33
+        targetSdk 32
         versionCode 7
         versionName "1.0.6"
 
@@ -49,8 +49,10 @@ android {
         it.buildConfigField "int", "APP_ID", appId
         def appHash = properties.getProperty("app_hash", "")
         it.buildConfigField "String", "APP_HASH", appHash
-        def adUnitId = properties.getProperty("ad_unit_id", "")
-        it.buildConfigField "String", "AD_UNIT_ID", adUnitId
+        def adRewardIdGoogle = properties.getProperty("ad_reward_id_google", "")
+        it.buildConfigField "String", "AD_REWARD_ID_GOOGLE", adRewardIdGoogle
+        def adRewardIdYandex = properties.getProperty("ad_reward_id_yandex", "")
+        it.buildConfigField "String", "AD_REWARD_ID_YANDEX", adRewardIdYandex
     }
 
     sourceSets {
@@ -133,9 +135,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
 
-    //Billing ADS
-    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    //Billing
     implementation "com.android.billingclient:billing-ktx:5.0.0"
+
+    //Ads
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+
+    // Yandex
+    implementation 'com.yandex.android:mobileads:5.2.0'
+    implementation 'com.yandex.android:mobmetricalib:5.0.1'
+    implementation 'com.yandex.ads.adapter:admob-mobileads:5.2.0.0'
 
     //Test
     testImplementation 'junit:junit:4.13.2'

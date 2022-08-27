@@ -22,7 +22,8 @@ import javax.inject.Singleton
         UserMenuModule::class,
         FirebaseModule::class,
         NotificationModule::class,
-        BillingModule::class
+        BillingModule::class,
+        AdsModule::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

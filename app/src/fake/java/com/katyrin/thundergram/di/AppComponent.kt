@@ -20,7 +20,8 @@ import javax.inject.Singleton
         MainModule::class,
         ChatListModule::class,
         ChatModule::class,
-        BillingModule::class
+        BillingModule::class,
+        AdsModule::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

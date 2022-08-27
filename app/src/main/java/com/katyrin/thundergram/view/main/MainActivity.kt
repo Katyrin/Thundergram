@@ -4,7 +4,9 @@ import android.content.Intent
 import android.content.Intent.ACTION_CALL
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.OnSwipe
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -12,18 +14,28 @@ import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.*
 import com.katyrin.thundergram.R
+import com.katyrin.thundergram.ad.AdManager
 import com.katyrin.thundergram.billing.BillingManager
+import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.notification.worker.NotificationWorker
+import com.katyrin.thundergram.viewmodel.MainViewModel
 import com.katyrin.thundergram.viewmodel.appstates.UserState
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, LoginListener {
+class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListener, LoginListener {
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private val viewModel: MainViewModel by viewModels(factoryProducer = { factory })
+
+    private var binding: ActivityMainBinding? = null
 
     private var navController: NavController? = null
     private var navGraph: NavGraph? = null
@@ -31,26 +43,41 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
     @Inject
     lateinit var billingManager: BillingManager
 
+    @Inject
+    lateinit var adManager: AdManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         setNavigation()
         viewModel.liveData.observe(this, ::renderUserState)
         viewModel.checkLogin()
         initViews()
-        initBilling()
+        initAds(savedInstanceState)
+        initBilling(savedInstanceState)
     }
 
-    private fun initBilling() {
-        billingManager.initBillingClient()
+    private fun initBilling(savedInstanceState: Bundle?) {
+        savedInstanceState ?: billingManager.initBillingClient()
         billingManager.sharedFlow
             .flowWithLifecycle(lifecycle)
             .onEach { viewModel.saveCoins(getCurrentCoins() + it) }
             .launchIn(lifecycleScope)
     }
 
+    private fun initAds(savedInstanceState: Bundle?) {
+        savedInstanceState ?: adManager.initAds(this)
+        adManager.isPersonalizationAds = true
+    }
+
     private fun initViews() {
         binding?.chatNameTextView?.text = getString(R.string.app_name)
         binding?.payButton?.setOnClickListener { navController?.navigate(R.id.billingDialogFragment) }
+        binding?.adsButton?.setOnClickListener {
+            adManager.tryShowRewardedVideo(this) {
+                viewModel.saveCoins(getCurrentCoins() + ONE_COIN)
+            }
+        }
     }
 
     private fun setNavigation() {
@@ -148,6 +175,8 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
         false
     }
 
+    private fun getCurrentCoins(): Long = binding?.countTextView?.text.toString().toLong()
+
     override fun onDestroy() {
         navController = null
         navGraph = null
@@ -157,7 +186,8 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
     private companion object {
         const val ZERO_COINS = 0
         const val TAG_NOTIFY_WORK = "TAG_NOTIFY_WORK"
-        private const val FIX_INTERVAL = 25L
-        private const val REPEAT_INTERVAL = 30L
+        const val FIX_INTERVAL = 25L
+        const val REPEAT_INTERVAL = 30L
+        const val ONE_COIN = 1
     }
 }
