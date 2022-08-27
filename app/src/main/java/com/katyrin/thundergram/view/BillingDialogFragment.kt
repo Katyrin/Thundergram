@@ -1,29 +1,42 @@
 package com.katyrin.thundergram.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.android.billingclient.api.*
-import com.android.billingclient.api.BillingClient.BillingResponseCode.OK
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.katyrin.thundergram.billing.BillingManager
+import com.katyrin.thundergram.billing.BillingState
 import com.katyrin.thundergram.databinding.FragmentBillingDialogBinding
-import com.katyrin.thundergram.utils.CALL_100_COIN
-import com.katyrin.thundergram.utils.CALL_500_COIN
-import com.katyrin.thundergram.utils.CALL_50_COIN
-import com.katyrin.thundergram.view.main.BaseBillingActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 
-class BillingDialogFragment : BottomSheetDialogFragment() {
+class BillingDialogFragment : BottomSheetDialogFragment(), HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector
+
+    @Inject
+    lateinit var billingManager: BillingManager
 
     private var binding: FragmentBillingDialogBinding? = null
-    private var billingClient: BillingClient? = null
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,64 +46,38 @@ class BillingDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        billingClient = (requireActivity() as BaseBillingActivity).billingClient
-        connectToGooglePlayBilling()
+        billingManager.stateFlow
+            .flowWithLifecycle(lifecycle)
+            .onEach(::renderBillingState)
+            .launchIn(lifecycleScope)
     }
 
-    private fun connectToGooglePlayBilling() {
-        billingClient?.startConnection(object : BillingClientStateListener {
-            override fun onBillingServiceDisconnected() {
-                connectToGooglePlayBilling()
-            }
-
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == OK) lifecycleScope.launch { getProductDetails() }
-            }
-        })
-    }
-
-    private suspend fun getProductDetails() {
-        val params = SkuDetailsParams.newBuilder()
-        val skuList = arrayListOf(CALL_50_COIN, CALL_100_COIN, CALL_500_COIN)
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
-        val skuDetailsResult = withContext(Dispatchers.IO) {
-            billingClient?.querySkuDetails(params.build())
-        }
-        val list = skuDetailsResult?.skuDetailsList
-        val responseCode = skuDetailsResult?.billingResult?.responseCode
-        if (responseCode == OK && !list.isNullOrEmpty()) initViews(list)
-    }
-
-    private suspend fun initViews(skuDetailsList: List<SkuDetails>): Unit =
-        withContext(Dispatchers.Main) {
+    private fun renderBillingState(billingStateList: List<BillingState>) {
+        billingStateList.forEachIndexed { index, billingState ->
             binding?.apply {
-                for (skuDetails in skuDetailsList) when (skuDetails.sku) {
-                    CALL_50_COIN ->
-                        skuDetails.setProductString(firstBillingText, firstBillingButton)
-                    CALL_100_COIN ->
-                        skuDetails.setProductString(secondBillingText, secondBillingButton)
-                    CALL_500_COIN ->
-                        skuDetails.setProductString(thirdBillingText, thirdBillingButton)
+                when (index) {
+                    0 -> billingState.setProductString(firstBillingText, firstBillingButton)
+                    1 -> billingState.setProductString(secondBillingText, secondBillingButton)
+                    2 -> billingState.setProductString(thirdBillingText, thirdBillingButton)
                 }
             }
         }
-
-    private fun SkuDetails.setProductString(productName: TextView, productButton: MaterialButton) {
-        val skuTitleAppNameRegex = """(?> \(.+?\))$""".toRegex()
-        productName.text = title.replace(skuTitleAppNameRegex, "")
-        productButton.text = price
-        productButton.setOnClickListener { setButtonBillingClick(this) }
     }
 
-    private fun setButtonBillingClick(skuDetails: SkuDetails) {
-        val flowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
-        billingClient?.launchBillingFlow(requireActivity(), flowParams)
-        dismiss()
+    private fun BillingState.setProductString(
+        productName: TextView,
+        productButton: MaterialButton
+    ) {
+        productName.text = title
+        productButton.text = price
+        productButton.setOnClickListener {
+            billingManager.launchBillingFlow(requireActivity(), index)
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
         binding = null
-        billingClient = null
         super.onDestroyView()
     }
 }

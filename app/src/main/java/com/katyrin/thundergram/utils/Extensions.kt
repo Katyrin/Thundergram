@@ -20,6 +20,9 @@ import com.katyrin.thundergram.R
 import com.katyrin.thundergram.view.notification.NotificationService
 import java.io.File
 
+fun Context.toast(messageId: Int): Unit =
+    Toast.makeText(this, messageId, Toast.LENGTH_LONG).show()
+
 fun Fragment.toast(message: String): Unit =
     Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
 

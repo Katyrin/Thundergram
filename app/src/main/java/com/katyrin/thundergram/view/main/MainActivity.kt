@@ -5,22 +5,31 @@ import android.content.Intent.ACTION_CALL
 import android.net.Uri
 import android.os.Bundle
 import androidx.constraintlayout.motion.widget.OnSwipe
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.*
 import com.katyrin.thundergram.R
+import com.katyrin.thundergram.billing.BillingManager
 import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.notification.worker.NotificationWorker
 import com.katyrin.thundergram.viewmodel.appstates.UserState
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, LoginListener {
 
     private var navController: NavController? = null
     private var navGraph: NavGraph? = null
+
+    @Inject
+    lateinit var billingManager: BillingManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +37,15 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
         viewModel.liveData.observe(this, ::renderUserState)
         viewModel.checkLogin()
         initViews()
-        initBillingClient { viewModel.saveCoins(getCurrentCoins() + it) }
+        initBilling()
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkBillingPurchased { viewModel.saveCoins(getCurrentCoins() + it) }
+    private fun initBilling() {
+        billingManager.initBillingClient()
+        billingManager.sharedFlow
+            .flowWithLifecycle(lifecycle)
+            .onEach { viewModel.saveCoins(getCurrentCoins() + it) }
+            .launchIn(lifecycleScope)
     }
 
     private fun initViews() {
@@ -62,7 +74,7 @@ class MainActivity : BaseAdsActivity(), CallListener, ToolBarMotionListener, Log
     }
 
     private fun openScreen(screen: Int): Unit? = navGraph?.let { navGraph ->
-        navGraph.startDestination = screen
+        navGraph.setStartDestination(screen)
         navController?.graph = navGraph
     }
 

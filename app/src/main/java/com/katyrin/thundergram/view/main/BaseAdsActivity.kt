@@ -11,9 +11,10 @@ import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.viewmodel.MainViewModel
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-abstract class BaseAdsActivity : BaseBillingActivity() {
+abstract class BaseAdsActivity : DaggerAppCompatActivity() {
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
