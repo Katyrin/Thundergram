@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="phone_number">Ingresa número telefónico</string>
+    <string name="enter_code">Introduzca el código</string>
+    <string name="enter_password">Introducir la contraseña</string>
+    <string name="login_description_text">Para ingresar a la aplicación, debe tener una cuenta de Telegram. También debe tener acceso al mensajero para recibir el código de verificación.</string>
+    <string name="send">Enviar</string>
+    <string name="change_phone_number">Cambiar número de teléfono</string>
+    <string name="send_sms_code">Enviar código como SMS</string>
+    <string name="helper_text_phone">Compruebe si el número introducido es correcto. El número debe comenzar con \"+\" seguido del código de su país y luego el número principal. También asegúrese de que no haya caracteres ni espacios adicionales en el número.</string>
+    <string name="helper_text_code">El código debe contener 5 dígitos, sin letras, espacios o caracteres adicionales.</string>
+    <string name="enter_message">Ingrese su mensaje</string>
+    <string name="access_to_call">Solicitud de permiso</string>
+    <string name="explanation_get_call">Se requiere permiso para llamadas telefónicas para usar la aplicación en su totalidad</string>
+    <string name="grant_access">Permitir el acceso</string>
+    <string name="do_not">No hay necesidad</string>
+    <string name="catch_phone_number">Captura un número de teléfono</string>
+    <string name="don_t_catch_phone_number">No atrapar un número de teléfono</string>
+    <string name="money">Dinero</string>
+    <string name="lack_count_message">No tienes suficientes puntos. Recarga tu contador</string>
+    <string name="ads_not_ready">Anuncio aún no cargado</string>
+    <string name="billing_canceling">Error causado por el usuario cancelando el proceso de compra</string>
+    <string name="any_other_error">Cualquier otro error</string>
+    <string name="service_connected_message">Elige cuantas monedas necesitas</string>
+    <string name="photo_message">Mensaje con foto</string>
+    <string name="voice_message">Un mensaje de voz</string>
+    <string name="service_title">No se recomienda deshabilitar esta notificación.</string>
+    <string name="service_message">Este servicio le permite captar los números de teléfono de un usuario de su elección y recibir nuevas notificaciones.</string>
+</resources>
