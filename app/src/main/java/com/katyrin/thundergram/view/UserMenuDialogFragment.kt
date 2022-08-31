@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.katyrin.thundergram.databinding.DialogFragmentUserMenuBinding
 import com.katyrin.thundergram.utils.UNSUBSCRIBE_ID
+import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.viewmodel.UserMenuViewModel
 import com.katyrin.thundergram.viewmodel.appstates.UserMenuState
 import dagger.android.AndroidInjector
@@ -63,8 +64,10 @@ class UserMenuDialogFragment : DialogFragment(), HasAndroidInjector {
         binding?.subscribeLayout?.isVisible = true
         binding?.unsubscribeLayout?.isVisible = false
         binding?.subscribeLayout?.setOnClickListener {
-            viewModel.subscribeUserInChat(chatId, userId)
-            dismiss()
+            requireActivity().checkCallPermission {
+                viewModel.subscribeUserInChat(chatId, userId)
+                dismiss()
+            }
         }
     }
 
