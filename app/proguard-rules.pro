@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.google.android.exoplayer2.source.dash.manifest.** {*;}
+-keep class org.drinkless.td.libcore.telegram.** {*;}

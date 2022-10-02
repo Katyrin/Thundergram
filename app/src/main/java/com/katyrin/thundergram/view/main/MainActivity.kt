@@ -87,10 +87,10 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         navGraph = navController?.navInflater?.inflate(R.navigation.nav_graph)
     }
 
-    private fun renderUserState(userState: UserState): Unit? = when (userState) {
+    private fun renderUserState(userState: UserState): Unit = when (userState) {
         is UserState.Error -> userState.message?.let { toast(it) } ?: Unit
         is UserState.LoggedState -> setLoggedState()
-        is UserState.NotLoggedState -> openScreen(R.id.loginFragment)
+        is UserState.NotLoggedState -> setNotLoggedState()
         is UserState.UpdateCoinState -> updateCoinCount(userState.currentCoin)
         is UserState.CallState -> onPhoneCallNumber(userState.phoneNumber, userState.decrementCoins)
     }
@@ -98,6 +98,11 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
     private fun setLoggedState() {
         onLoginState()
         openScreen(R.id.chatListFragment)
+    }
+
+    private fun setNotLoggedState() {
+        binding?.motionLayout?.transitionToEnd()
+        openScreen(R.id.tutorialFragment)
     }
 
     private fun openScreen(screen: Int): Unit? = navGraph?.let { navGraph ->
@@ -135,6 +140,7 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
     }
 
     override fun onLoginState() {
+        binding?.motionLayout?.transitionToStart()
         viewModel.updateCoins()
         viewModel.callSubscribedPhone()
         viewModel.getUpdatesCoins()

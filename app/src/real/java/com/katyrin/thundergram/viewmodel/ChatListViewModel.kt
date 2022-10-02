@@ -8,7 +8,6 @@ import com.katyrin.thundergram.model.repository.ChatListRepository
 import com.katyrin.thundergram.utils.PARAMETERS_MESSAGE_ERROR
 import com.katyrin.thundergram.viewmodel.appstates.ChatListState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import org.drinkless.td.libcore.telegram.TdApi
@@ -55,6 +54,7 @@ class ChatListViewModel @Inject constructor(
 
     fun getChats() {
         cancelJob()
+        mutableLiveData.value = ChatListState.LoadState
         viewModelCoroutineScope.launch {
             mutableLiveData.value = ChatListState.Success(chatListRepository.getChats(), true)
         }

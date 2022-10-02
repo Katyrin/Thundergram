@@ -26,4 +26,12 @@
     <string name="voice_message">Un mensaje de voz</string>
     <string name="service_title">No se recomienda deshabilitar esta notificación.</string>
     <string name="service_message">Este servicio le permite captar los números de teléfono de un usuario de su elección y recibir nuevas notificaciones.</string>
+    <string name="tutor_skip">Omitir</string>
+    <string name="tutor_next">Continuar</string>
+    <string name="tutor_step0_text">Esta es una aplicación para rastrear el envío de un número de teléfono basado en el mensajero de Telegram. Versión no oficial del mensajero Telegram. Contiene funciones mínimas de mensajería. El objetivo principal de la aplicación es rastrear el envío de un número de teléfono de un usuario específico en un chat específico. En el momento en que el usuario al que sigues envíe un número de teléfono, la aplicación llamará automáticamente a ese número, siempre que la aplicación esté abierta.</string>
+    <string name="tutor_step1_text">Primero debes ingresar a la aplicación usando el número de teléfono que tienes asignado a tu cuenta de Telegram</string>
+    <string name="tutor_open_chat">Luego, desde su lista, abra el chat que necesita o la correspondencia personal con el usuario</string>
+    <string name="tutor_choose_user">Mantenga el área en cualquier lugar cerca del icono del usuario cuyo número desea capturar</string>
+    <string name="tutor_step3_text">Aparecerá un botón en el centro de la pantalla, debes presionarlo para comenzar a capturar los números de teléfono del usuario</string>
+    <string name="tutor_step4_text">Y tan pronto como el usuario al que te suscribiste envíe cualquier número de teléfono, la aplicación realizará automáticamente la llamada antes de que sea visible en el chat.</string>
 </resources>

@@ -12,4 +12,5 @@
     <color name="background_app_bar_button">#3e6189</color>
     <color name="background_app_bar">#212d3b</color>
     <color name="header_text_color_light">#CC000000</color>
+    <color name="color_ripple">#33FFFFFF</color>
 </resources>

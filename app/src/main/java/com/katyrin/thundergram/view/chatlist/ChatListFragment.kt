@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.OnSwipe
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDirections
@@ -68,9 +69,11 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding>() {
     private fun renderData(chatListState: ChatListState): Unit? = when (chatListState) {
         is ChatListState.Success -> updateList(chatListState.chatList, chatListState.isStartService)
         is ChatListState.Error -> chatListState.message?.let { toast(it) }
+        is ChatListState.LoadState -> binding?.progressBar?.isVisible = true
     }
 
     private fun updateList(chatList: List<ChatListItem>, isStartService: Boolean) {
+        binding?.progressBar?.isVisible = false
         (binding?.recyclerChatList?.adapter as ChatListAdapter).submitList(chatList)
         if (isStartService) requireContext().onStartService()
     }

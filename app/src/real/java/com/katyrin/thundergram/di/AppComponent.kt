@@ -23,7 +23,8 @@ import javax.inject.Singleton
         FirebaseModule::class,
         NotificationModule::class,
         BillingModule::class,
-        AdsModule::class
+        AdsModule::class,
+        TutorialModel::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

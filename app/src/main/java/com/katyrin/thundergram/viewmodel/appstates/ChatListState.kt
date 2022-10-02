@@ -9,4 +9,5 @@ sealed class ChatListState {
     ) : ChatListState()
 
     data class Error(val message: String?) : ChatListState()
+    object LoadState : ChatListState()
 }

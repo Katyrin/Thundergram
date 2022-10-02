@@ -31,4 +31,12 @@
     <string name="voice_message">Voice message</string>
     <string name="service_title">It is not recommended to disable this service</string>
     <string name="service_message">This service allows you to catch the phone numbers of the user you have chosen and receive new notifications.</string>
+    <string name="tutor_skip">Skip</string>
+    <string name="tutor_next">Continue</string>
+    <string name="tutor_step0_text">This is an application to track the sending of a phone number based on the Telegram messenger. Unofficial version of the Telegram messenger. Contains minimal messenger functions. The main purpose of the application is to track the sending of a phone number from a specific user in a specific chat. The moment the user you follow sends a phone number, the app will automatically call that number, provided the app is open.</string>
+    <string name="tutor_step1_text">First you must enter the application using the phone number that you have assigned to your Telegram account</string>
+    <string name="tutor_open_chat">Then, from your list, open the chat you need or personal correspondence with the user</string>
+    <string name="tutor_choose_user">Hold the area anywhere near the icon of the user whose number you want to catch</string>
+    <string name="tutor_step3_text">A button will appear in the center of the screen, you must press it to start catching phone numbers from the user</string>
+    <string name="tutor_step4_text">And as soon as the user you subscribed to sends any phone number, the application will automatically make the call before it is visible in the chat</string>
 </resources>

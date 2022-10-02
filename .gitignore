@@ -19,3 +19,4 @@ apikey.properties
 app/real/release
 .idea/misc.xml
 .idea/gradle.xml
+/app/real/
