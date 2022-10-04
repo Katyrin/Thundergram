@@ -11,8 +11,8 @@ class FirebaseModule {
 
     @Singleton
     @Provides
-    fun provideUsersReference(firebaseDatabase: FirebaseDatabase): DatabaseReference =
-        firebaseDatabase.getReference(USERS_REFERENCE)
+    fun provideUsersReference(): DatabaseReference =
+        FirebaseDatabase.getInstance().getReference(USERS_REFERENCE)
 
     private companion object {
         const val USERS_REFERENCE = "users"
