@@ -1,6 +1,7 @@
 package com.katyrin.thundergram.view.chat.adapter
 
 import android.net.Uri
+import android.view.View
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.katyrin.thundergram.R
@@ -9,14 +10,13 @@ import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.utils.setChatIconFromUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MyVoiceMessageHolder(
     private val coroutineScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
     private val itemBinding: ItemMyVoiceMessageBinding,
-    private val onSubscribeUser: (chatId: Long, userId: Long) -> Unit
+    private val onSubscribeUser: (chatId: Long, userId: Long, view: View, name: String) -> Unit
 ) : BaseVoiceViewHolder(exoPlayer, itemBinding.root) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
@@ -36,7 +36,9 @@ class MyVoiceMessageHolder(
             onSeekBarChange(itemBinding.soundSeekBar) {
                 onStartVoice(position, mediaItem, itemBinding.speedTextView)
             }
-            itemBinding.root.setOnClickListener { onSubscribeUser(chatId, userId) }
+            itemBinding.root.setOnClickListener {
+                onSubscribeUser(chatId, userId, itemBinding.userImageView, userName)
+            }
         }
 
     override fun subscribeAudioProgress(position: Int) {

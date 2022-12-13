@@ -9,8 +9,8 @@ import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.motion.widget.OnSwipe
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.ExoPlayer
@@ -25,6 +25,8 @@ import com.katyrin.thundergram.view.main.MainActivity
 import com.katyrin.thundergram.view.main.ToolBarMotionListener
 import com.katyrin.thundergram.viewmodel.ChatViewModel
 import com.katyrin.thundergram.viewmodel.appstates.ChatState
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 
@@ -55,6 +57,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         viewModel.liveData.observe(viewLifecycleOwner, ::renderData)
+        viewModel.effect
+            .flowWithLifecycle(lifecycle)
+            .onEach(::renderEffect)
+            .launchIn(viewLifecycleOwner.lifecycleScope)
         viewModel.getMessages(getChatId())
         viewModel.getNewMessage(getChatId()).observe(viewLifecycleOwner, ::updateList)
     }
@@ -71,20 +77,19 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
 
     private fun initViews() {
         binding?.apply {
-            chatRecyclerView.adapter =
-                ChatAdapter(exoPlayer, lifecycleScope, ::onPhoneNumberClick, ::openUserMenu)
+            chatRecyclerView.adapter = ChatAdapter(
+                exoPlayer,
+                lifecycleScope,
+                ::onPhoneNumberClick,
+                viewModel::checkExistSubscribe,
+                viewModel::onClickUserMenu
+            )
             chatTextInputLayout.setEndIconOnClickListener { sendMessage() }
             chatInputEditText.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()
                 false
             }
         }
-    }
-
-    private fun openUserMenu(chatId: Long, userId: Long) {
-        val navDirections: NavDirections =
-            ChatFragmentDirections.actionChatFragmentToUserMenuDialogFragment(chatId, userId)
-        navController?.navigate(navDirections)
     }
 
     private fun onPhoneNumberClick(phoneNumber: String) {
@@ -120,6 +125,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
                 else super.onItemRangeInserted(positionStart, itemCount)
             }
     }
+
+    private fun renderEffect(isSubscribed: Boolean): Unit =
+        (binding?.chatRecyclerView?.adapter as ChatAdapter).onShowPopupMenu(isSubscribed)
 
     override fun onDestroyView() {
         callListener = null

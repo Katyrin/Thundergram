@@ -18,7 +18,6 @@ import javax.inject.Singleton
         MainModule::class,
         ChatListModule::class,
         ChatModule::class,
-        UserMenuModule::class,
         FirebaseModule::class,
         NotificationModule::class,
         BillingModule::class,

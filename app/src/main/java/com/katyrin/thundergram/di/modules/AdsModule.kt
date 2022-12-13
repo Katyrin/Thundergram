@@ -17,43 +17,41 @@ class AdsModule {
     @Provides
     @Singleton
     fun provideAdManager(context: Context): AdManager =
-        when (getDetectedCountry(context)) {
-            RU, BE, UK -> AdManagerYandex()
+        when (context.getDetectedCountry()) {
+            RU, BE -> AdManagerYandex()
             else -> AdManagerGoogle()
         }
 
-    private fun getDetectedCountry(context: Context): String {
-        context.detectNetworkCountry()?.let { return it }
-        context.detectSIMCountry()?.let { return it }
-        detectLocaleCountry()?.let { return it }
-        return DEFAULT
+    private fun Context.getDetectedCountry(): String =
+        detectNetworkCountry() ?: detectSIMCountry() ?: detectLocaleCountry()
+
+    private fun Context.detectNetworkCountry(): String? = try {
+        val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val networkCountryIso = telephonyManager.networkCountryIso
+        Log.d(TAG, "detectNetworkCountry: $networkCountryIso")
+        if (networkCountryIso == "") null else networkCountryIso
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 
     private fun Context.detectSIMCountry(): String? = try {
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        Log.d(TAG, "detectSIMCountry: ${telephonyManager.simCountryIso}")
-        telephonyManager.simCountryIso
+        val simCountryIso = telephonyManager.simCountryIso
+        Log.d(TAG, "detectSIMCountry: $simCountryIso")
+        if (simCountryIso == "") null else simCountryIso
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }
 
-    private fun Context.detectNetworkCountry(): String? = try {
-        val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        Log.d(TAG, "detectNetworkCountry: ${telephonyManager.networkCountryIso}")
-        telephonyManager.networkCountryIso
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-
-    private fun detectLocaleCountry(): String? = try {
+    private fun detectLocaleCountry(): String = try {
         val localeCountryISO = Locale.getDefault().language
         Log.d(TAG, "detectLocaleCountry: $localeCountryISO")
-        localeCountryISO
+        if (localeCountryISO == "") DEFAULT else localeCountryISO
     } catch (e: Exception) {
         e.printStackTrace()
-        null
+        DEFAULT
     }
 
     private companion object {
@@ -61,6 +59,5 @@ class AdsModule {
         const val DEFAULT = "en"
         const val RU = "ru"
         const val BE = "be"
-        const val UK = "uk"
     }
 }

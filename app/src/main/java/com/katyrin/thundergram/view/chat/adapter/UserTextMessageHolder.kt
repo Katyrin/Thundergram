@@ -1,5 +1,6 @@
 package com.katyrin.thundergram.view.chat.adapter
 
+import android.view.View
 import com.katyrin.thundergram.databinding.ItemUserTextMessageBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.utils.setChatIconFromUri
@@ -7,7 +8,7 @@ import com.katyrin.thundergram.utils.setChatIconFromUri
 class UserTextMessageHolder(
     private val itemBinding: ItemUserTextMessageBinding,
     onPhoneNumberClick: (String) -> Unit,
-    private val onSubscribeUser: (chatId: Long, userId: Long) -> Unit
+    private val onSubscribeUser: (chatId: Long, userId: Long, view: View, name: String) -> Unit
 ) : BaseTextVewHolder(itemBinding.root, onPhoneNumberClick) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
@@ -16,6 +17,8 @@ class UserTextMessageHolder(
             itemBinding.messageTextView.text = message
             setSpannableString(itemBinding.messageTextView)
             itemBinding.userImageView.setChatIconFromUri(userPhotoPath)
-            itemBinding.root.setOnClickListener { onSubscribeUser(chatId, userId) }
+            itemBinding.root.setOnClickListener {
+                onSubscribeUser(chatId, userId, itemBinding.userImageView, userName)
+            }
         }
 }

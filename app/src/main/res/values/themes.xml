@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Thundergram" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -12,5 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background_app_bar</item>
         <!-- Customize your theme here. -->
+        <item name="android:itemBackground">@color/purple_200</item>
+        <item name="android:popupBackground">@color/purple_200</item>
     </style>
 </resources>
