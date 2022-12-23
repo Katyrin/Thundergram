@@ -14,3 +14,5 @@ var regexPhoneNumber: String =
 
 const val PARAMETERS_MESSAGE_ERROR =
     "Initialization parameters are needed: call setTdlibParameters first"
+
+const val PACKAGE = "package"

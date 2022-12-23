@@ -4,6 +4,7 @@
     package="com.katyrin.thundergram">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".App"
@@ -29,8 +30,7 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="phoneCall" />
-
-        <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9470505371140253~7842083650" />

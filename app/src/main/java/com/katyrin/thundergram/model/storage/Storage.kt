@@ -9,4 +9,5 @@ interface Storage {
     fun setMyUserId(userId: Long)
     fun isVolumeOn(chatId: Long): Boolean
     fun setIsVolumeOn(chatId: Long, isOn: Boolean)
+    fun getVolumeOnChats(): List<Long>
 }

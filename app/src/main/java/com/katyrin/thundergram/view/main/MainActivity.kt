@@ -12,21 +12,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.work.*
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.ad.AdManager
 import com.katyrin.thundergram.billing.BillingManager
 import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.utils.toast
-import com.katyrin.thundergram.view.notification.worker.NotificationWorker
+import com.katyrin.thundergram.view.notification.worker.NotificationWorkerGenerator
 import com.katyrin.thundergram.viewmodel.MainViewModel
 import com.katyrin.thundergram.viewmodel.appstates.UserState
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListener, LoginListener {
@@ -45,6 +42,9 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
 
     @Inject
     lateinit var adManager: AdManager
+
+    @Inject
+    lateinit var notificationWorkerGenerator: NotificationWorkerGenerator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,41 +144,7 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         viewModel.updateCoins()
         viewModel.callSubscribedPhone()
         viewModel.getUpdatesCoins()
-        startNotificationWork()
-    }
-
-    private fun startNotificationWork() {
-        if (isWorkScheduled()) WorkManager.getInstance(this).cancelAllWorkByTag(TAG_NOTIFY_WORK)
-        val keep = ExistingPeriodicWorkPolicy.KEEP
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(TAG_NOTIFY_WORK, keep, getPeriodicWorkRequest())
-    }
-
-    private fun getPeriodicWorkRequest(): PeriodicWorkRequest =
-        Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            .let { constraints ->
-                PeriodicWorkRequest.Builder(
-                    NotificationWorker::class.java,
-                    REPEAT_INTERVAL, TimeUnit.MINUTES,
-                    FIX_INTERVAL, TimeUnit.MINUTES
-                )
-                    .addTag(TAG_NOTIFY_WORK)
-                    .setConstraints(constraints)
-                    .build()
-            }
-
-    private fun isWorkScheduled(): Boolean = try {
-        var running = false
-        WorkManager.getInstance(this).getWorkInfosByTag(TAG_NOTIFY_WORK).get().forEach {
-            running = it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
-        }
-        running
-    } catch (e: ExecutionException) {
-        e.printStackTrace()
-        false
-    } catch (e: InterruptedException) {
-        e.printStackTrace()
-        false
+        notificationWorkerGenerator.startNotificationWork()
     }
 
     private fun getCurrentCoins(): Long = binding?.countTextView?.text.toString().toLong()
@@ -191,9 +157,6 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
 
     private companion object {
         const val ZERO_COINS = 0
-        const val TAG_NOTIFY_WORK = "TAG_NOTIFY_WORK"
-        const val FIX_INTERVAL = 25L
-        const val REPEAT_INTERVAL = 30L
         const val ONE_COIN = 1
     }
 }

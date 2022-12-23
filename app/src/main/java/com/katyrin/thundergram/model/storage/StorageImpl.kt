@@ -24,12 +24,24 @@ class StorageImpl @Inject constructor(context: Context) : Storage {
 
     override fun setMyUserId(userId: Long): Unit = prefs.edit().putLong(MY_USER_ID, userId).apply()
 
-    override fun isVolumeOn(chatId: Long): Boolean = prefs.getBoolean(chatId.toString(), false)
+    override fun isVolumeOn(chatId: Long): Boolean =
+        prefs.getStringSet(CHATS_ON_VOLUME, setOf())?.contains(chatId.toString()) ?: false
 
-    override fun setIsVolumeOn(chatId: Long, isOn: Boolean): Unit =
-        prefs.edit().putBoolean(chatId.toString(), isOn).apply()
+    override fun setIsVolumeOn(chatId: Long, isOn: Boolean) {
+        val chats: MutableSet<String> =
+            prefs.getStringSet(CHATS_ON_VOLUME, setOf())?.toMutableSet() ?: mutableSetOf()
+        if (isOn) chats.add(chatId.toString()) else chats.remove(chatId.toString())
+        prefs.edit().putStringSet(CHATS_ON_VOLUME, chats).apply()
+    }
+
+    override fun getVolumeOnChats(): List<Long> {
+        val chats: MutableList<Long> = mutableListOf()
+        prefs.getStringSet(CHATS_ON_VOLUME, setOf())?.forEach { chats.add(it.toLong()) }
+        return chats
+    }
 
     private companion object {
+        const val CHATS_ON_VOLUME = "CHATS_ON_VOLUME"
         const val SUBSCRIBE_CHAT_ID = "SUBSCRIBE_CHAT_ID"
         const val SUBSCRIBE_USER_ID = "SUBSCRIBE_USER_ID"
         const val MY_USER_ID = "MY_USER_ID"

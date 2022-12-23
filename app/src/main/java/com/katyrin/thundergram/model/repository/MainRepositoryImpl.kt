@@ -3,6 +3,7 @@ package com.katyrin.thundergram.model.repository
 import com.google.firebase.database.DatabaseReference
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.libtd_ktx.coroutines.getMe
+import com.katyrin.libtd_ktx.coroutines.openChat
 import com.katyrin.libtd_ktx.flows.newMessageFlow
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.entities.FirebaseEventResponse
@@ -29,6 +30,9 @@ class MainRepositoryImpl @Inject constructor(
     private val usersReference: DatabaseReference,
     override val api: TelegramFlow
 ) : MainRepository {
+
+    override suspend fun openChat(chatId: Long): Unit =
+        withContext(Dispatchers.IO) { api.openChat(chatId) }
 
     override fun getUserState(): UserState =
         if (storage.getMyUserId() != ZERO_ID) UserState.LoggedState else UserState.NotLoggedState

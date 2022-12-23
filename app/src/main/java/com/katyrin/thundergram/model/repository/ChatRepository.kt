@@ -5,6 +5,7 @@ import com.katyrin.thundergram.model.entities.ChatMessage
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository : ChatKtx {
+    suspend fun openChat(chatId: Long)
     suspend fun getHistoryMessages(chatId: Long): List<ChatMessage>
     fun getNewMessage(chatId: Long): Flow<List<ChatMessage>>
     suspend fun sendMessage(chatId: Long, message: String)

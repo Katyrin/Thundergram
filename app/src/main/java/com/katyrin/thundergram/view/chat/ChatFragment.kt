@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.ExoPlayer
 import com.katyrin.thundergram.databinding.FragmentChatBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
+import com.katyrin.thundergram.utils.checkCallPermission
 import com.katyrin.thundergram.utils.hideKeyboard
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.BaseFragment
@@ -76,19 +77,16 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
     private fun getChatName(): String = ChatFragmentArgs.fromBundle(requireArguments()).chatName
 
     private fun initViews() {
-        binding?.apply {
-            chatRecyclerView.adapter = ChatAdapter(
-                exoPlayer,
-                lifecycleScope,
-                ::onPhoneNumberClick,
-                viewModel::checkExistSubscribe,
-                viewModel::onClickUserMenu
-            )
-            chatTextInputLayout.setEndIconOnClickListener { sendMessage() }
-            chatInputEditText.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()
-                false
-            }
+        binding?.chatRecyclerView?.adapter = ChatAdapter(
+            exoPlayer,
+            lifecycleScope,
+            ::onPhoneNumberClick,
+            viewModel::checkExistSubscribe
+        ) { requireActivity().checkCallPermission(viewModel::onClickUserMenu) }
+        binding?.chatTextInputLayout?.setEndIconOnClickListener { sendMessage() }
+        binding?.chatInputEditText?.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()
+            false
         }
     }
 

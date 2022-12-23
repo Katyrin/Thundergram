@@ -41,6 +41,7 @@ class ChatViewModel @Inject constructor(
     fun getMessages(chatId: Long) {
         cancelJob()
         viewModelCoroutineScope.launch {
+            chatRepository.openChat(chatId)
             var messages: List<ChatMessage> = listOf()
             while (messages.size <= MAX_MESSAGE_SIZE) {
                 val messageList = chatRepository.getHistoryMessages(chatId).also { messages = it }

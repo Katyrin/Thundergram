@@ -32,6 +32,8 @@
     <string name="tutor_step1_text">Primero debes ingresar a la aplicación usando el número de teléfono que tienes asignado a tu cuenta de Telegram</string>
     <string name="tutor_open_chat">Luego, desde su lista, abra el chat que necesita o la correspondencia personal con el usuario</string>
     <string name="tutor_choose_user">Mantenga el área en cualquier lugar cerca del icono del usuario cuyo número desea capturar</string>
-    <string name="tutor_step3_text">Aparecerá un botón en el centro de la pantalla, debes presionarlo para comenzar a capturar los números de teléfono del usuario</string>
+    <string name="tutor_step3_text">Aparecerá una pequeña ventana emergente junto al icono del usuario, debe hacer clic en él para comenzar a capturar los números de teléfono del usuario seleccionado</string>
     <string name="tutor_step4_text">Y tan pronto como el usuario al que te suscribiste envíe cualquier número de teléfono, la aplicación realizará automáticamente la llamada antes de que sea visible en el chat.</string>
+    <string name="notification_disabled">Notificación deshabilitada</string>
+    <string name="settings_text">Ajustes</string>
 </resources>

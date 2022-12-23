@@ -9,10 +9,10 @@ import com.katyrin.thundergram.R
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.repository.ChatListRepository
 import com.katyrin.thundergram.model.repository.MainRepository
+import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.utils.PARAMETERS_MESSAGE_ERROR
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import org.drinkless.td.libcore.telegram.TdApi
@@ -28,6 +28,9 @@ class NotificationService : Service() {
 
     @Inject
     lateinit var notificationGenerator: NotificationGenerator
+
+    @Inject
+    lateinit var storage: Storage
 
     private val serviceScope = CoroutineScope(
         Dispatchers.Main
@@ -62,6 +65,7 @@ class NotificationService : Service() {
     }
 
     private suspend fun getNewMessage() {
+        storage.getVolumeOnChats().forEach { mainRepository.openChat(it) }
         mainRepository.getNewMessageFlow()
             .flowOn(Dispatchers.Default)
             .filter(::filterDoubleMessage)
@@ -69,9 +73,18 @@ class NotificationService : Service() {
     }
 
     private fun filterDoubleMessage(chatMessage: ChatMessage): Boolean = when (chatMessage) {
-        is ChatMessage.Text -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
-        is ChatMessage.Photo -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
-        is ChatMessage.Voice -> chatId != chatMessage.chatId || messageId != chatMessage.messageId
+        is ChatMessage.Text ->
+            if (storage.isVolumeOn(chatMessage.chatId) && chatMessage.userId != storage.getMyUserId())
+                if (messageId != chatMessage.messageId) true else chatId != chatMessage.chatId
+            else false
+        is ChatMessage.Photo ->
+            if (storage.isVolumeOn(chatMessage.chatId) && chatMessage.userId != storage.getMyUserId())
+                if (messageId != chatMessage.messageId) true else chatId != chatMessage.chatId
+            else false
+        is ChatMessage.Voice ->
+            if (storage.isVolumeOn(chatMessage.chatId) && chatMessage.userId != storage.getMyUserId())
+                if (messageId != chatMessage.messageId) true else chatId != chatMessage.chatId
+            else false
     }
 
     private fun renderNewMessage(chatMessage: ChatMessage): Unit = when (chatMessage) {

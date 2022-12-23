@@ -7,6 +7,7 @@ import com.katyrin.thundergram.viewmodel.appstates.UserState
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository : UserKtx {
+    suspend fun openChat(chatId: Long)
     fun getUserState(): UserState
     fun getSubscribedPhone(): Flow<String>
     suspend fun setCoins(coins: Long)

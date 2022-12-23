@@ -2,6 +2,7 @@ package com.katyrin.thundergram.model.repository
 
 import com.katyrin.libtd_ktx.core.TelegramFlow
 import com.katyrin.libtd_ktx.coroutines.getChatHistory
+import com.katyrin.libtd_ktx.coroutines.openChat
 import com.katyrin.libtd_ktx.coroutines.sendMessage
 import com.katyrin.libtd_ktx.flows.newMessageFlow
 import com.katyrin.thundergram.model.entities.ChatMessage
@@ -18,6 +19,9 @@ class ChatRepositoryImpl @Inject constructor(
     private val messageMapping: MessageMapping,
     override val api: TelegramFlow
 ) : ChatRepository {
+
+    override suspend fun openChat(chatId: Long): Unit =
+        withContext(Dispatchers.IO) { api.openChat(chatId) }
 
     override suspend fun getHistoryMessages(chatId: Long): List<ChatMessage> =
         withContext(Dispatchers.IO) {
@@ -49,6 +53,6 @@ class ChatRepositoryImpl @Inject constructor(
     private companion object {
         const val FROM_MESSAGE_ID = 0L
         const val OFFSET_MESSAGE = 0
-        const val MESSAGE_LIMIT = 1000
+        const val MESSAGE_LIMIT = 100
     }
 }
