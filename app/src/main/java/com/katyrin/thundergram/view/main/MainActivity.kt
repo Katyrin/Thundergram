@@ -2,10 +2,14 @@ package com.katyrin.thundergram.view.main
 
 import android.content.Intent
 import android.content.Intent.ACTION_CALL
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.motion.widget.OnSwipe
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,9 +21,12 @@ import com.katyrin.thundergram.ad.AdManager
 import com.katyrin.thundergram.billing.BillingManager
 import com.katyrin.thundergram.databinding.ActivityMainBinding
 import com.katyrin.thundergram.utils.checkCallPermission
+import com.katyrin.thundergram.utils.setTextRate
 import com.katyrin.thundergram.utils.toast
 import com.katyrin.thundergram.view.notification.worker.NotificationWorkerGenerator
 import com.katyrin.thundergram.viewmodel.MainViewModel
+import com.katyrin.thundergram.viewmodel.appstates.SoundEffect
+import com.katyrin.thundergram.viewmodel.appstates.SoundState
 import com.katyrin.thundergram.viewmodel.appstates.UserState
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.flow.launchIn
@@ -50,11 +57,47 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
         super.onCreate(savedInstanceState)
         setContentView(ActivityMainBinding.inflate(layoutInflater).also { binding = it }.root)
         setNavigation()
-        viewModel.liveData.observe(this, ::renderUserState)
-        viewModel.checkLogin()
+        initViewModel()
         initViews()
         initAds(savedInstanceState)
         initBilling(savedInstanceState)
+    }
+
+    private fun initViewModel() {
+        viewModel.liveData.observe(this, ::renderUserState)
+        viewModel.checkLogin()
+        viewModel.soundEffect
+            .flowWithLifecycle(lifecycle)
+            .onEach(::renderSoundEffect)
+            .launchIn(lifecycleScope)
+        viewModel.soundState
+            .flowWithLifecycle(lifecycle)
+            .onEach(::renderSoundState)
+            .launchIn(lifecycleScope)
+    }
+
+    private fun renderSoundEffect(soundEffect: SoundEffect): Unit = when (soundEffect) {
+        is SoundEffect.OnSoundButtonPlay -> onSoundAnimation(R.drawable.avd_play_to_pause)
+        is SoundEffect.OnSoundButtonPause -> onSoundAnimation(R.drawable.avd_pause_to_play)
+    }
+
+    private fun onSoundAnimation(drawableResource: Int) {
+        binding?.apply {
+            val appCompatDrawable =
+                AppCompatResources.getDrawable(this@MainActivity, drawableResource)
+            playButton.setImageDrawable(appCompatDrawable)
+            val drawable: Drawable = playButton.drawable
+            if (drawable is AnimatedVectorDrawable) drawable.start()
+        }
+    }
+
+    private fun renderSoundState(soundState: SoundState) {
+        binding?.soundLayout?.isVisible = soundState.isShowSoundBar
+        binding?.soundName?.text = soundState.soundName
+        binding?.soundSpeed?.setTextRate(soundState.speed)
+        val drawableResource: Int =
+            if (soundState.isPlayState) R.drawable.avd_play_to_pause else R.drawable.avd_pause_to_play
+        onSoundAnimation(drawableResource)
     }
 
     private fun initBilling(savedInstanceState: Bundle?) {
@@ -78,6 +121,9 @@ class MainActivity : DaggerAppCompatActivity(), CallListener, ToolBarMotionListe
                 viewModel.saveCoins(getCurrentCoins() + ONE_COIN)
             }
         }
+        binding?.playButton?.setOnClickListener { viewModel.onClickSoundButton() }
+        binding?.btnExit?.setOnClickListener { viewModel.onClickSoundExit() }
+        binding?.soundSpeed?.setOnClickListener { viewModel.onUpdateSoundSpeed() }
     }
 
     private fun setNavigation() {

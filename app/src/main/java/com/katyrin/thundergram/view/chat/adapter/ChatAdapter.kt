@@ -17,6 +17,9 @@ class ChatAdapter(
     private val coroutineScope: CoroutineScope,
     private val onPhoneNumberClick: (String) -> Unit,
     private val onClickUser: (Long, Long) -> Unit,
+    private val onUpdateSoundSpeed: () -> Unit,
+    private val onClickPlayButton: (ChatMessage.Voice, Boolean) -> Unit,
+    private val onUpdateSeekTo: (Long) -> Unit,
     private val onClickUserMenu: () -> Unit
 ) : ListAdapter<ChatMessage, BaseViewHolder>(DiffCallback()) {
 
@@ -54,6 +57,9 @@ class ChatAdapter(
                     coroutineScope,
                     exoPlayer,
                     ItemMyVoiceMessageBinding.inflate(this, parent, false),
+                    onUpdateSoundSpeed,
+                    onClickPlayButton,
+                    onUpdateSeekTo
                 ) { chatId, userId, view, name ->
                     clickedView = view
                     clickedUserName = name
@@ -63,6 +69,9 @@ class ChatAdapter(
                     coroutineScope,
                     exoPlayer,
                     ItemUserVoiceMessageBinding.inflate(this, parent, false),
+                    onUpdateSoundSpeed,
+                    onClickPlayButton,
+                    onUpdateSeekTo
                 ) { chatId, userId, view, name ->
                     clickedView = view
                     clickedUserName = name

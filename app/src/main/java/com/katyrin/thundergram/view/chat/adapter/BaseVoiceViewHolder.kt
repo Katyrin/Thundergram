@@ -1,11 +1,16 @@
 package com.katyrin.thundergram.view.chat.adapter
 
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.katyrin.thundergram.R
+import com.katyrin.thundergram.view.waveview.SeekBarOnProgressChanged
+import com.katyrin.thundergram.view.waveview.WaveformSeekBar
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,35 +20,8 @@ abstract class BaseVoiceViewHolder(
     itemView: View
 ) : BaseViewHolder(itemView) {
 
-    protected var currentPosition = START_CURRENT_POSITION
     protected var currentVoiceDuration = ZERO_VOICE_DURATION
-
-    protected fun setRate(textView: TextView, onChangeRate: (Float) -> Unit): Unit =
-        with(textView.context) {
-            textView.text = when (textView.text) {
-                getString(R.string.first_speed) -> {
-                    onChangeRate(SECOND_SPEED)
-                    getString(R.string.second_speed)
-                }
-                getString(R.string.second_speed) -> {
-                    onChangeRate(THIRD_SPEED)
-                    getString(R.string.third_speed)
-                }
-                else -> {
-                    onChangeRate(FIRST_SPEED)
-                    getString(R.string.first_speed)
-                }
-            }
-        }
-
-    private fun getRate(textView: TextView, onRate: (Float) -> Unit): Unit =
-        with(textView.context) {
-            when (textView.text) {
-                getString(R.string.first_speed) -> onRate(FIRST_SPEED)
-                getString(R.string.second_speed) -> onRate(SECOND_SPEED)
-                getString(R.string.third_speed) -> onRate(THIRD_SPEED)
-            }
-        }
+    protected var audioProgressJob: Job? = null
 
     protected fun audioProgress(): Flow<Int> = flow {
         var isPlaying = true
@@ -62,57 +40,66 @@ abstract class BaseVoiceViewHolder(
             .div(exoPlayer.duration)
             .times(SEEK_BAR_FULL_SIZE).toInt()
 
-    private fun getMsPosition(progress: Int): Long =
+    private fun getMsPosition(progress: Float): Long =
         currentVoiceDuration.toFloat().div(SEEK_BAR_FULL_SIZE).times(progress).toLong()
 
-    protected fun onSeekBarChange(seekBar: SeekBar, onRestart: () -> Unit) {
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                onRestart()
-            }
-        })
+    protected fun WaveformSeekBar.onSeekBarChange(onRestart: () -> Unit) {
+        onProgressChanged = object : SeekBarOnProgressChanged {
+            override fun onProgressChanged(progress: Float): Unit = onRestart()
+        }
     }
 
-    protected fun clickPlay(position: Int, mediaItem: MediaItem, speedTextView: TextView): Unit =
-        if (exoPlayer.isPlaying && position == currentPosition) onStopVoice()
-        else onStartVoice(position, mediaItem, speedTextView)
+    protected fun clickPlay(
+        mediaItem: MediaItem,
+        speed: Float,
+        isPlayingPosition: Boolean,
+        onCLickPlayButton: (Boolean) -> Unit
+    ): Unit =
+        if (exoPlayer.isPlaying && isPlayingPosition) onPauseVoice(onCLickPlayButton)
+        else onStartVoice(mediaItem, speed, onCLickPlayButton)
 
-    private fun onStopVoice() {
+    private fun onPauseVoice(onCLickPlayButton: (Boolean) -> Unit) {
         setPlayIcon(R.drawable.ic_play)
-        exoPlayer.pause()
+        onCLickPlayButton(false)
     }
 
-    protected fun onStartVoice(position: Int, mediaItem: MediaItem, speedTextView: TextView) {
-        var progress = getProgressSeekBar()
-        if (progress > PROGRESS_RESTART_SIZE) progress = ZERO_PROGRESS
-        currentPosition = position
+    private fun onStartVoice(
+        mediaItem: MediaItem,
+        speed: Float,
+        onCLickPlayButton: (Boolean) -> Unit
+    ) {
         setPlayIcon(R.drawable.ic_pause)
-        getRate(speedTextView, exoPlayer::setPlaybackSpeed)
+        exoPlayer.setPlaybackSpeed(speed)
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
-        exoPlayer.seekTo(getMsPosition(progress))
-        exoPlayer.play()
-        subscribeAudioProgress(position)
+        onChangeProgress(exoPlayer::seekTo)
+        onCLickPlayButton(true)
+    }
+
+    protected fun onSoundAnimation(isPlayState: Boolean, imageView: ImageView) {
+        val drawableResource: Int = if (isPlayState) R.drawable.ic_pause else R.drawable.ic_play
+        val appCompatDrawable = AppCompatResources.getDrawable(imageView.context, drawableResource)
+        imageView.setImageDrawable(appCompatDrawable)
+        val drawable: Drawable = imageView.drawable
+        if (drawable is AnimatedVectorDrawable) drawable.start()
+    }
+
+    protected fun onChangeProgress(onUpdateSeekTo: (Long) -> Unit) {
+        var progress = getProgressSeekBar()
+        if (progress > PROGRESS_RESTART_SIZE) progress = ZERO_PROGRESS
+        onUpdateSeekTo(getMsPosition(progress))
     }
 
     protected abstract fun setPlayIcon(icon: Int)
-    protected abstract fun getProgressSeekBar(): Int
-    protected abstract fun subscribeAudioProgress(position: Int)
+    protected abstract fun getProgressSeekBar(): Float
 
     protected companion object {
-        const val FIRST_SPEED = 1.0f
-        const val SECOND_SPEED = 2.0f
-        const val THIRD_SPEED = 2.5f
         const val ZERO_COUNT = 0
-        const val ZERO_PROGRESS = 0
+        const val ZERO_PROGRESS = 0f
         const val SEEK_BAR_FULL_SIZE = 100
-        const val PROGRESS_RESTART_SIZE = 95
+        const val PROGRESS_RESTART_SIZE = 98
         const val DELAY_BETWEEN_EMITS = 10L
         const val CHECK_PLAYER_COUNT = 50
-        const val START_CURRENT_POSITION = -1
-        const val START_SEEK_BAR_POSITION = 1
         const val ZERO_VOICE_DURATION = 0L
     }
 }

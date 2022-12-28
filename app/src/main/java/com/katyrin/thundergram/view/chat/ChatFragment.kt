@@ -26,6 +26,7 @@ import com.katyrin.thundergram.view.main.MainActivity
 import com.katyrin.thundergram.view.main.ToolBarMotionListener
 import com.katyrin.thundergram.viewmodel.ChatViewModel
 import com.katyrin.thundergram.viewmodel.appstates.ChatState
+import com.katyrin.thundergram.viewmodel.appstates.ChatViewEffect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -81,8 +82,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
             exoPlayer,
             lifecycleScope,
             ::onPhoneNumberClick,
-            viewModel::checkExistSubscribe
+            viewModel::checkExistSubscribe,
+            viewModel::onUpdateSoundSpeed,
+            viewModel::onClickPlayButton,
+            viewModel::onUpdateSeekTo
         ) { requireActivity().checkCallPermission(viewModel::onClickUserMenu) }
+        binding?.chatRecyclerView?.itemAnimator = null
         binding?.chatTextInputLayout?.setEndIconOnClickListener { sendMessage() }
         binding?.chatInputEditText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) sendMessage()
@@ -124,8 +129,12 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
             }
     }
 
-    private fun renderEffect(isSubscribed: Boolean): Unit =
-        (binding?.chatRecyclerView?.adapter as ChatAdapter).onShowPopupMenu(isSubscribed)
+    private fun renderEffect(chatViewEffect: ChatViewEffect): Unit = when (chatViewEffect) {
+        is ChatViewEffect.OnIsSubscribed ->
+            (binding?.chatRecyclerView?.adapter as ChatAdapter).onShowPopupMenu(true)
+        is ChatViewEffect.OnIsNotSubscribed ->
+            (binding?.chatRecyclerView?.adapter as ChatAdapter).onShowPopupMenu(false)
+    }
 
     override fun onDestroyView() {
         callListener = null

@@ -7,10 +7,12 @@ import com.katyrin.libtd_ktx.coroutines.getRemoteFile
 import com.katyrin.libtd_ktx.coroutines.getUser
 import com.katyrin.libtd_ktx.extensions.UserKtx
 import com.katyrin.thundergram.model.entities.ChatMessage
+import com.katyrin.thundergram.model.storage.SoundStorage
 import org.drinkless.td.libcore.telegram.TdApi
 import javax.inject.Inject
 
 class MessageMappingImpl @Inject constructor(
+    private val soundStorage: SoundStorage,
     override val api: TelegramFlow
 ) : MessageMapping, UserKtx {
 
@@ -34,7 +36,12 @@ class MessageMappingImpl @Inject constructor(
                 api.getUser(message.senderUserId).firstName + " " + api.getUser(message.senderUserId).lastName,
                 getVoiceMessagePath(content.voiceNote.voice),
                 getUserPhotoPath(message.senderUserId),
-                message.isOutgoing
+                message.isOutgoing,
+                soundStorage.getSoundSpeed(),
+                message.chatId == soundStorage.chatIdPlay &&
+                        message.senderUserId.toLong() == soundStorage.userIdPlay &&
+                        message.id == soundStorage.messageIdPlay,
+                soundStorage.isPlayState
             )
             is TdApi.MessagePhoto -> ChatMessage.Photo(
                 message.chatId,

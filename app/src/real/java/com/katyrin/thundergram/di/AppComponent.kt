@@ -22,7 +22,8 @@ import javax.inject.Singleton
         NotificationModule::class,
         BillingModule::class,
         AdsModule::class,
-        TutorialModel::class
+        TutorialModel::class,
+        SoundModule::class
     ]
 )
 interface AppComponent : AndroidInjector<App> {

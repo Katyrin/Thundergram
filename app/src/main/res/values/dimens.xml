@@ -23,7 +23,9 @@
     <dimen name="corner_radius_app_bar_button">8dp</dimen>
     <dimen name="padding_group_button">12dp</dimen>
     <dimen name="size_app_bar_icon_image">40dp</dimen>
+    <dimen name="sound_layout_height">32dp</dimen>
 
     <dimen name="text_size_money">32sp</dimen>
+    <dimen name="text_size_sound">16sp</dimen>
 
 </resources>

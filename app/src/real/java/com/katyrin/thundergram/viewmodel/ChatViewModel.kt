@@ -6,19 +6,20 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.model.repository.ChatRepository
+import com.katyrin.thundergram.model.repository.SoundRepository
 import com.katyrin.thundergram.model.storage.Storage
 import com.katyrin.thundergram.utils.UNSUBSCRIBE_ID
 import com.katyrin.thundergram.viewmodel.appstates.ChatState
+import com.katyrin.thundergram.viewmodel.appstates.ChatViewEffect
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val storage: Storage
+    private val storage: Storage,
+    private val soundRepository: SoundRepository
 ) : BaseViewModel() {
 
     fun getNewMessage(chatId: Long): LiveData<List<ChatMessage>> =
@@ -28,8 +29,8 @@ class ChatViewModel @Inject constructor(
     val liveData: LiveData<ChatState>
         get() = mutableLiveData
 
-    private val _effect = MutableSharedFlow<Boolean>()
-    val effect: SharedFlow<Boolean> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<ChatViewEffect>()
+    val effect: SharedFlow<ChatViewEffect> = _effect.asSharedFlow()
 
     private var cashChatId: Long = UNSUBSCRIBE_ID
     private var cashUserId: Long = UNSUBSCRIBE_ID
@@ -53,9 +54,7 @@ class ChatViewModel @Inject constructor(
 
     fun sendMessage(chatId: Long, message: String) {
         cancelJob()
-        viewModelCoroutineScope.launch {
-            chatRepository.sendMessage(chatId, message)
-        }
+        viewModelCoroutineScope.launch { chatRepository.sendMessage(chatId, message) }
     }
 
     fun checkExistSubscribe(chatId: Long, userId: Long): Unit = with(storage) {
@@ -67,13 +66,23 @@ class ChatViewModel @Inject constructor(
             cashChatId = chatId
             cashUserId = userId
         }
-        viewModelScope.launch { _effect.emit(isSubscribed) }
+        val chatViewEffect: ChatViewEffect =
+            if (isSubscribed) ChatViewEffect.OnIsSubscribed else ChatViewEffect.OnIsNotSubscribed
+        viewModelScope.launch { _effect.emit(chatViewEffect) }
     }
 
     fun onClickUserMenu() {
         storage.setSubscribeChatId(cashChatId)
         storage.setSubscribeUserId(cashUserId)
     }
+
+    fun onUpdateSoundSpeed(): Unit = soundRepository.onUpdateSoundSpeed()
+
+    fun onClickPlayButton(voice: ChatMessage.Voice, isPlayState: Boolean) {
+        viewModelCoroutineScope.launch { soundRepository.onClickPlayButton(voice, isPlayState) }
+    }
+
+    fun onUpdateSeekTo(positionMs: Long): Unit = soundRepository.onUpdateSeekTo(positionMs)
 
     private companion object {
         const val MAX_MESSAGE_SIZE = 100

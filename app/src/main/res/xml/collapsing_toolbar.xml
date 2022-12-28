@@ -64,6 +64,9 @@
                 app:attributeName="textSize"
                 app:customFloatValue="32" />
         </Constraint>
+        <ConstraintOverride
+            android:id="@id/sound_layout"
+            app:visibilityMode="ignore" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/collapsed">
@@ -112,6 +115,9 @@
                 app:attributeName="textSize"
                 app:customFloatValue="24" />
         </Constraint>
+        <ConstraintOverride
+            android:id="@id/sound_layout"
+            app:visibilityMode="ignore" />
     </ConstraintSet>
 
 </MotionScene>

@@ -21,36 +21,43 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textStyle="bold"
             tools:text="User Name" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/play_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_play"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/user_name" />
 
-        <SeekBar
+        <com.katyrin.thundergram.view.waveview.WaveformSeekBar
             android:id="@+id/sound_seek_bar"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:paddingHorizontal="@dimen/margin_image_normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/speed_text_view"
-            app:layout_constraintStart_toEndOf="@id/play_image_view" />
+            app:layout_constraintStart_toEndOf="@id/play_image_view"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:wave_background_color="@color/purple_200"
+            app:wave_progress_color="@color/background_app_bar_button" />
 
         <TextView
             android:id="@+id/speed_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:text="@string/first_speed"
             android:textSize="@dimen/text_size_speed"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

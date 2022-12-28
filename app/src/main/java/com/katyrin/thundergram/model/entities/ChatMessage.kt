@@ -20,7 +20,10 @@ sealed class ChatMessage {
         val userName: String = "",
         val voiceFilePath: String = "",
         val userPhotoPath: String? = "",
-        val isMyMessage: Boolean = false
+        val isMyMessage: Boolean = false,
+        val speed: Float = 1.0f,
+        val isPlayingPosition: Boolean = false,
+        val isPlayState: Boolean = false
     ) : ChatMessage()
 
     data class Photo(

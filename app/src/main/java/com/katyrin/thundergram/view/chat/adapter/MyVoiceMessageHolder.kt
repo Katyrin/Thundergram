@@ -4,55 +4,63 @@ import android.net.Uri
 import android.view.View
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.katyrin.thundergram.R
 import com.katyrin.thundergram.databinding.ItemMyVoiceMessageBinding
 import com.katyrin.thundergram.model.entities.ChatMessage
 import com.katyrin.thundergram.utils.setChatIconFromUri
+import com.katyrin.thundergram.utils.setTextRate
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 class MyVoiceMessageHolder(
     private val coroutineScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
     private val itemBinding: ItemMyVoiceMessageBinding,
+    private val onUpdateSoundSpeed: () -> Unit,
+    private val onClickPlayButton: (ChatMessage.Voice, Boolean) -> Unit,
+    private val onUpdateSeekTo: (Long) -> Unit,
     private val onSubscribeUser: (chatId: Long, userId: Long, view: View, name: String) -> Unit
 ) : BaseVoiceViewHolder(exoPlayer, itemBinding.root) {
 
     override fun bind(chatMessage: ChatMessage, position: Int): Unit =
         with(chatMessage as ChatMessage.Voice) {
+            subscribeAudioProgress(isPlayingPosition)
+            onSoundAnimation(isPlayingPosition && isPlayState, itemBinding.playImageView)
             itemBinding.userName.text = chatMessage.userName
-            val mediaItem = MediaItem.fromUri(Uri.parse(voiceFilePath))
+            val soundUri: Uri = Uri.parse(voiceFilePath)
+            val mediaItem = MediaItem.fromUri(soundUri)
+            itemBinding.soundSeekBar.setSampleFrom(soundUri)
             itemBinding.soundSeekBar.progress = ZERO_PROGRESS
-            itemBinding.speedTextView.text =
-                itemBinding.root.context.getString(R.string.first_speed)
+            itemBinding.speedTextView.setTextRate(speed)
             itemBinding.userImageView.setChatIconFromUri(userPhotoPath)
             itemBinding.playImageView.setOnClickListener {
-                clickPlay(position, mediaItem, itemBinding.speedTextView)
+                clickPlay(mediaItem, speed, isPlayingPosition) { isPlay ->
+                    onClickPlayButton(this, isPlay)
+                    if (isPlay) subscribeAudioProgress(isPlayingPosition)
+                }
             }
-            itemBinding.speedTextView.setOnClickListener {
-                setRate(itemBinding.speedTextView, exoPlayer::setPlaybackSpeed)
-            }
-            onSeekBarChange(itemBinding.soundSeekBar) {
-                onStartVoice(position, mediaItem, itemBinding.speedTextView)
+            itemBinding.speedTextView.setOnClickListener { onUpdateSoundSpeed() }
+            itemBinding.soundSeekBar.onSeekBarChange {
+                if (isPlayingPosition) onChangeProgress { onUpdateSeekTo(it) }
+                subscribeAudioProgress(isPlayingPosition)
             }
             itemBinding.root.setOnClickListener {
                 onSubscribeUser(chatId, userId, itemBinding.userImageView, userName)
             }
         }
 
-    override fun subscribeAudioProgress(position: Int) {
-        coroutineScope.coroutineContext.cancelChildren()
-        coroutineScope.launch {
+    private fun subscribeAudioProgress(isPlayingPosition: Boolean) {
+        audioProgressJob?.cancel()
+        audioProgressJob = coroutineScope.launch {
             audioProgress().collect { progress ->
-                currentVoiceDuration = exoPlayer.duration
-                itemBinding.soundSeekBar.progress =
-                    if (position == currentPosition) progress else START_SEEK_BAR_POSITION
+                if (isPlayingPosition) {
+                    currentVoiceDuration = exoPlayer.duration
+                    itemBinding.soundSeekBar.progress = progress.toFloat()
+                }
             }
         }
     }
 
     override fun setPlayIcon(icon: Int): Unit = itemBinding.playImageView.setImageResource(icon)
 
-    override fun getProgressSeekBar(): Int = itemBinding.soundSeekBar.progress
+    override fun getProgressSeekBar(): Float = itemBinding.soundSeekBar.progress
 }

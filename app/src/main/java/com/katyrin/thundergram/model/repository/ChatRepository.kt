@@ -9,4 +9,5 @@ interface ChatRepository : ChatKtx {
     suspend fun getHistoryMessages(chatId: Long): List<ChatMessage>
     fun getNewMessage(chatId: Long): Flow<List<ChatMessage>>
     suspend fun sendMessage(chatId: Long, message: String)
+    fun emitNewMessage()
 }

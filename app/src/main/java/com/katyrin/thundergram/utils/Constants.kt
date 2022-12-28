@@ -16,3 +16,7 @@ const val PARAMETERS_MESSAGE_ERROR =
     "Initialization parameters are needed: call setTdlibParameters first"
 
 const val PACKAGE = "package"
+
+const val FIRST_SPEED = 1.0f
+const val SECOND_SPEED = 2.0f
+const val THIRD_SPEED = 2.5f

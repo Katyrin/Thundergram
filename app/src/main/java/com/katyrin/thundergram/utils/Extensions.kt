@@ -13,6 +13,7 @@ import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +27,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.katyrin.thundergram.R
 import com.katyrin.thundergram.view.notification.NotificationService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import java.io.File
 
 fun Context.toast(messageId: Int): Unit =
@@ -122,3 +125,21 @@ private fun AppCompatActivity.requestPermissionLauncher(
     registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) grantedCallback()
     }
+
+fun Float.setNewSpeed(): Float = when (this) {
+    FIRST_SPEED -> SECOND_SPEED
+    SECOND_SPEED -> THIRD_SPEED
+    else -> FIRST_SPEED
+}
+
+fun TextView.setTextRate(speed: Float): Unit = with(context) {
+    text = when (speed) {
+        FIRST_SPEED -> getString(R.string.first_speed)
+        SECOND_SPEED -> getString(R.string.second_speed)
+        else -> getString(R.string.third_speed)
+    }
+}
+
+inline fun <T> MutableStateFlow<T>.update(function: T.() -> T) {
+    update { function(value) }
+}

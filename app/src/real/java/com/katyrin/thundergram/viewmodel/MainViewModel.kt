@@ -5,14 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.katyrin.thundergram.model.entities.FirebaseEventResponse
 import com.katyrin.thundergram.model.repository.MainRepository
+import com.katyrin.thundergram.model.repository.SoundRepository
+import com.katyrin.thundergram.viewmodel.appstates.SoundEffect
+import com.katyrin.thundergram.viewmodel.appstates.SoundState
 import com.katyrin.thundergram.viewmodel.appstates.UserState
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val mainRepository: MainRepository
+    private val mainRepository: MainRepository,
+    private val soundRepository: SoundRepository
 ) : BaseViewModel() {
+
+    private val _soundEffect: MutableSharedFlow<SoundEffect> = MutableSharedFlow()
+    val soundEffect: SharedFlow<SoundEffect> = _soundEffect.asSharedFlow()
+    val soundState: StateFlow<SoundState> = soundRepository.state
 
     private val mutableLiveData: MutableLiveData<UserState> = MutableLiveData()
     val liveData: LiveData<UserState>
@@ -65,6 +73,20 @@ class MainViewModel @Inject constructor(
         if (currentCoins == DEFAULT_COINS) mainRepository.setCoins(DEFAULT_COINS)
         return currentCoins.toInt()
     }
+
+    fun onClickSoundButton() {
+        viewModelCoroutineScope.launch {
+            if (soundRepository.isPlayState) _soundEffect.emit(SoundEffect.OnSoundButtonPause)
+            else _soundEffect.emit(SoundEffect.OnSoundButtonPlay)
+            soundRepository.isPlayState = !soundRepository.isPlayState
+        }
+    }
+
+    fun onClickSoundExit() {
+        viewModelCoroutineScope.launch { soundRepository.onClickSoundExit() }
+    }
+
+    fun onUpdateSoundSpeed(): Unit = soundRepository.onUpdateSoundSpeed()
 
     private companion object {
         const val DEFAULT_COINS = 10L
